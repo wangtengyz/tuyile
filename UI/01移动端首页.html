@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#00e3fd",
+                    "on-secondary-fixed-variant": "#7520b5",
+                    "background": "#fff3fd",
+                    "on-primary-container": "#5b4b00",
+                    "on-error-container": "#520c00",
+                    "inverse-surface": "#18071e",
+                    "on-error": "#ffefec",
+                    "tertiary-fixed-dim": "#00d4ec",
+                    "error-container": "#f95630",
+                    "error": "#b02500",
+                    "on-secondary-container": "#6b0dab",
+                    "outline": "#866f8c",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#f9d8ff",
+                    "secondary-dim": "#741eb4",
+                    "surface-container-low": "#feebff",
+                    "surface-container": "#fbdfff",
+                    "outline-variant": "#bfa5c4",
+                    "on-tertiary-fixed-variant": "#005762",
+                    "on-primary-fixed-variant": "#665500",
+                    "surface-container-highest": "#f5d1fd",
+                    "surface": "#fff3fd",
+                    "tertiary-container": "#00e3fd",
+                    "surface-variant": "#f5d1fd",
+                    "surface-tint": "#6c5a00",
+                    "inverse-primary": "#ffd709",
+                    "on-secondary-fixed": "#510085",
+                    "on-tertiary": "#d8f8ff",
+                    "primary": "#6c5a00",
+                    "on-surface-variant": "#6a546f",
+                    "surface-bright": "#fff3fd",
+                    "primary-fixed": "#ffd709",
+                    "on-tertiary-container": "#004d57",
+                    "secondary-container": "#e7c5ff",
+                    "on-background": "#3b2841",
+                    "primary-fixed-dim": "#efc900",
+                    "on-surface": "#3b2841",
+                    "error-dim": "#b92902",
+                    "on-tertiary-fixed": "#003840",
+                    "surface-dim": "#eec8f6",
+                    "secondary-fixed-dim": "#deb3ff",
+                    "inverse-on-surface": "#ae95b3",
+                    "secondary": "#812fc1",
+                    "on-primary-fixed": "#453900",
+                    "tertiary-dim": "#005863",
+                    "tertiary": "#006571",
+                    "primary-dim": "#5e4e00",
+                    "primary-container": "#ffd709",
+                    "secondary-fixed": "#e7c5ff",
+                    "on-primary": "#fff2cd",
+                    "on-secondary": "#fceeff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-image: radial-gradient(#bfa5c4 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .pixel-shadow {
+            box-shadow: 4px 4px 0px 0px #3b2841;
+        }
+        .pixel-shadow-active {
+            box-shadow: 2px 2px 0px 0px #3b2841;
+            transform: translate(2px, 2px);
+        }
+        .speech-bubble-tail {
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #f5d1fd;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen flex flex-col items-center">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fff3fd] dark:bg-[#1a0f1d] shadow-[4px_4px_0px_0px_rgba(59,40,65,0.08)]">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#6c5a00] dark:text-[#ffd709]" data-icon="videogame_asset">videogame_asset</span>
+<span class="text-xl font-black text-[#6c5a00] dark:text-[#ffd709] font-['Space_Grotesk'] font-bold tracking-tighter uppercase">PIXEL GUESSER</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#6c5a00] dark:text-[#ffd709] hover:translate-y-0.5 transition-transform active:scale-95 duration-100" data-icon="monetization_on">monetization_on</span>
+<span class="font-headline font-bold text-primary">1,250</span>
+</div>
+</div>
+</nav>
+<main class="flex-1 w-full max-w-md px-6 pt-24 pb-32 flex flex-col items-center relative overflow-hidden">
+<!-- Floating Speech Bubbles -->
+<div class="absolute top-28 right-4 z-10">
+<div class="bg-surface-container-highest p-3 pixel-shadow relative max-w-[140px]">
+<p class="text-xs font-bold leading-tight">第4题正在埋伏你</p>
+<div class="speech-bubble-tail"></div>
+</div>
+</div>
+<div class="absolute top-64 left-2 z-10 rotate-[-5deg]">
+<div class="bg-surface-container-highest p-3 pixel-shadow relative max-w-[120px]">
+<p class="text-xs font-bold leading-tight">谁是像素之王？</p>
+<div class="speech-bubble-tail" style="left: auto; right: 15px;"></div>
+</div>
+</div>
+<!-- Hero Section -->
+<section class="w-full mt-8 mb-12 flex flex-col items-center text-center">
+<div class="w-48 h-48 mb-8 relative">
+<div class="absolute inset-0 bg-primary-container pixel-shadow rotate-3"></div>
+<img class="absolute inset-0 w-full h-full object-cover border-4 border-primary z-10" data-alt="A stylized pixel art character of a mischievous digital trickster with a grinning mask, vibrant yellow and purple palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL15_mMV-qFIWhENYC9I4J--kMyKTR8J-7WNw153-B1un9xygz-pKZUfjfherNLeJtwkU0QDdh3enwOiXzTcPRWWUXj2fMplzI0h6xVJTufkREnqGkoHwjRpQUEel76XGuD1bAc9juijVRV-9VCyQxUObGRaKmaBh6UUQ770rE2pVHBypNyQkRPqxZSS8qmCYDwNK5ZTxpMpFB9SqDnEghRGHkmgBv-rPAlyuPZISazJpVi-0nvBtSwfKpcrlgYtkax97Ov0tQA8mG"/>
+</div>
+<h1 class="font-headline text-3xl font-extrabold tracking-tighter mb-2 text-on-surface">
+                一眼会认，二眼烧脑
+            </h1>
+<p class="text-on-surface-variant font-medium text-sm px-8">
+                不仅考验你的视力，更在玩弄你的大脑。敢来挑战吗？
+            </p>
+</section>
+<!-- Main Action -->
+<div class="w-full mb-8">
+<button class="w-full bg-primary-container text-primary font-headline font-black text-2xl py-6 border-b-[6px] border-primary pixel-shadow active:translate-y-1 active:border-b-[2px] transition-all duration-75 uppercase">
+                开始烧脑
+            </button>
+</div>
+<!-- Secondary Actions Grid -->
+<div class="grid grid-cols-2 gap-4 w-full">
+<button class="bg-surface-container-low text-on-surface p-4 flex flex-col items-center justify-center gap-2 pixel-shadow hover:bg-surface-container-highest transition-colors active:translate-y-1">
+<span class="material-symbols-outlined text-secondary" data-icon="category">category</span>
+<span class="font-bold text-sm">模块挑战</span>
+</button>
+<button class="bg-surface-container-low text-on-surface p-4 flex flex-col items-center justify-center gap-2 pixel-shadow hover:bg-surface-container-highest transition-colors active:translate-y-1">
+<span class="material-symbols-outlined text-tertiary" data-icon="military_tech">military_tech</span>
+<span class="font-bold text-sm">查看称号</span>
+</button>
+<button class="bg-surface-container-low text-on-surface p-4 flex flex-col items-center justify-center gap-2 pixel-shadow hover:bg-surface-container-highest transition-colors active:translate-y-1">
+<span class="material-symbols-outlined text-primary" data-icon="leaderboard">leaderboard</span>
+<span class="font-bold text-sm">排行榜</span>
+</button>
+<button class="bg-surface-container-low text-on-surface p-4 flex flex-col items-center justify-center gap-2 pixel-shadow hover:bg-surface-container-highest transition-colors active:translate-y-1">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant" data-icon="history">history</span>
+<span class="font-bold text-sm">我的战绩</span>
+</button>
+</div>
+<!-- Social Proof / Ticker -->
+<div class="w-full mt-10 bg-secondary-container p-3 flex items-center gap-3 overflow-hidden">
+<div class="flex-shrink-0 bg-secondary p-1">
+<span class="material-symbols-outlined text-on-secondary text-sm" data-icon="campaign">campaign</span>
+</div>
+<p class="text-xs font-bold text-on-secondary-container whitespace-nowrap animate-pulse">
+                玩家 "PixelMaster99" 刚刚解锁了 [一眼万年] 称号！
+            </p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-[#fff3fd] dark:bg-[#1a0f1d] border-t-4 border-[#6c5a00] dark:border-[#ffd709]">
+<div class="flex justify-around items-stretch w-full h-20 px-2 pb-safe max-w-md mx-auto">
+<!-- Active Tab: 首页 -->
+<a class="flex flex-col items-center justify-center bg-[#ffd709] text-[#6c5a00] p-2 border-b-4 border-[#6c5a00] flex-1" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">首页</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 flex-1 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">排名</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 flex-1 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">商店</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 flex-1 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">菜单</span>
+</a>
+</div>
+</nav>
+</body></html>

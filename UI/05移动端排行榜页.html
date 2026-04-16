@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#00e3fd",
+                    "on-secondary-fixed-variant": "#7520b5",
+                    "background": "#fff3fd",
+                    "on-primary-container": "#5b4b00",
+                    "on-error-container": "#520c00",
+                    "inverse-surface": "#18071e",
+                    "on-error": "#ffefec",
+                    "tertiary-fixed-dim": "#00d4ec",
+                    "error-container": "#f95630",
+                    "error": "#b02500",
+                    "on-secondary-container": "#6b0dab",
+                    "outline": "#866f8c",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#f9d8ff",
+                    "secondary-dim": "#741eb4",
+                    "surface-container-low": "#feebff",
+                    "surface-container": "#fbdfff",
+                    "outline-variant": "#bfa5c4",
+                    "on-tertiary-fixed-variant": "#005762",
+                    "on-primary-fixed-variant": "#665500",
+                    "surface-container-highest": "#f5d1fd",
+                    "surface": "#fff3fd",
+                    "tertiary-container": "#00e3fd",
+                    "surface-variant": "#f5d1fd",
+                    "surface-tint": "#6c5a00",
+                    "inverse-primary": "#ffd709",
+                    "on-secondary-fixed": "#510085",
+                    "on-tertiary": "#d8f8ff",
+                    "primary": "#6c5a00",
+                    "on-surface-variant": "#6a546f",
+                    "surface-bright": "#fff3fd",
+                    "primary-fixed": "#ffd709",
+                    "on-tertiary-container": "#004d57",
+                    "secondary-container": "#e7c5ff",
+                    "on-background": "#3b2841",
+                    "primary-fixed-dim": "#efc900",
+                    "on-surface": "#3b2841",
+                    "error-dim": "#b92902",
+                    "on-tertiary-fixed": "#003840",
+                    "surface-dim": "#eec8f6",
+                    "secondary-fixed-dim": "#deb3ff",
+                    "inverse-on-surface": "#ae95b3",
+                    "secondary": "#812fc1",
+                    "on-primary-fixed": "#453900",
+                    "tertiary-dim": "#005863",
+                    "tertiary": "#006571",
+                    "primary-dim": "#5e4e00",
+                    "primary-container": "#ffd709",
+                    "secondary-fixed": "#e7c5ff",
+                    "on-primary": "#fff2cd",
+                    "on-secondary": "#fceeff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .pixel-shadow {
+            box-shadow: 4px 4px 0px 0px #3b2841;
+        }
+        .pixel-shadow-sm {
+            box-shadow: 2px 2px 0px 0px #3b2841;
+        }
+        .pixel-border-b {
+            border-bottom: 4px solid #6c5a00;
+        }
+        .pixel-border-primary {
+            border: 4px solid #6c5a00;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body select-none">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#fff3fd] dark:bg-[#1a0f1d] shadow-[4px_4px_0px_0px_rgba(59,40,65,0.08)]">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#6c5a00] dark:text-[#ffd709]" data-icon="videogame_asset">videogame_asset</span>
+<h1 class="font-headline font-bold tracking-tighter uppercase text-xl text-[#6c5a00] dark:text-[#ffd709]">PIXEL GUESSER</h1>
+</div>
+<div class="flex items-center gap-1 active:scale-95 duration-100 cursor-pointer">
+<span class="material-symbols-outlined text-[#6c5a00] dark:text-[#ffd709]" data-icon="monetization_on">monetization_on</span>
+<span class="font-headline font-bold text-[#6c5a00] dark:text-[#ffd709]">2,450</span>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-44 px-4 max-w-md mx-auto min-h-screen">
+<!-- Header Section -->
+<section class="mb-6">
+<div class="bg-surface-container-highest p-4 pixel-shadow relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="military_tech">military_tech</span>
+</div>
+<h2 class="font-headline text-2xl font-black text-primary leading-tight uppercase mb-1">今日猜图高手榜</h2>
+<p class="text-sm font-medium text-on-surface-variant opacity-80">看看谁才是真正的像素大侦探？</p>
+</div>
+</section>
+<!-- Tabs Navigation -->
+<nav class="flex mb-8 gap-1 bg-surface-container-low p-1">
+<button class="flex-1 py-2 text-sm font-bold font-headline transition-all bg-primary-container text-primary pixel-shadow-sm">今日</button>
+<button class="flex-1 py-2 text-sm font-bold font-headline transition-all text-on-surface-variant hover:bg-surface-container-highest">本周</button>
+<button class="flex-1 py-2 text-sm font-bold font-headline transition-all text-on-surface-variant hover:bg-surface-container-highest">好友</button>
+<button class="flex-1 py-2 text-sm font-bold font-headline transition-all text-on-surface-variant hover:bg-surface-container-highest">模块</button>
+</nav>
+<!-- Top 3 Podium (Vertical Stacked as per instruction) -->
+<section class="space-y-4 mb-8">
+<!-- Rank 1 -->
+<div class="relative flex items-center bg-primary-container p-4 pixel-shadow border-2 border-primary">
+<div class="absolute -left-2 top-1/2 -translate-y-1/2 bg-primary text-primary-container w-8 h-8 flex items-center justify-center font-black font-headline pixel-shadow-sm">1</div>
+<div class="ml-8 flex items-center gap-4 w-full">
+<div class="w-14 h-14 bg-surface-container-lowest pixel-border-primary overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="vibrant pixel art character portrait of a mischievous boy with goggles and neon green hair on a purple background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrR1L9o60KCJHSIwlkkwGdDz-9x1iZWUzkRiHrD8AO_G2_dFIAPtmgu1Vs1cgWYbJP_CqTkXxu7hlXLCbPUxDAUuY08cCZog__nTpygMzLRhyVoKeRAJuyEPvTsE7B0HmVRe4YWUoPUhSJsxn0aSTmQcXPcRWvkbVMJMUxCzMhRXeyy7OUAdBX64HfAsjyhY0qt-Yk2Vxz-EwooYbqBZUOkauOAl7kbv8817s7dINhDhmHdOngogQloYteAvHE8sA4P_poJj3tLvxO"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline font-bold text-lg text-primary">PIXEL_MASTER_99</h3>
+<div class="flex items-center gap-1 text-sm font-bold text-on-primary-container uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="stars">stars</span>
+                            9,840 pts
+                        </div>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="workspace_premium" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="relative flex items-center bg-surface-container-highest p-4 pixel-shadow">
+<div class="absolute -left-2 top-1/2 -translate-y-1/2 bg-secondary text-on-secondary w-8 h-8 flex items-center justify-center font-black font-headline pixel-shadow-sm">2</div>
+<div class="ml-8 flex items-center gap-4 w-full">
+<div class="w-12 h-12 bg-surface-container-lowest border-2 border-secondary overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="vibrant pixel art character portrait of a mysterious girl with a hood and purple hair on a dark cosmic background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt9sc-JAdfShh8T0gpfNt_v78fe-Jw-HU6YiYjWvpXFOXNYsowdKfD8oPuYSq__ypY7NLOm9WL-DqjkT741jM-0SFL9y4cI_RYp1Nw7jWmLFsx4Ox83icIjvlBAfKfh8xDGq9KkuID0SNgtviZ3sU7pdtwDZdu_FrNXxMG44IUUm-OXXNSLC1psnXKaPjmbhrXh5t69Ce6KcfIP5QeA8GAiPsEDJMEaaMDcHXXrNP7lzAwSc9n2o6ManCduBNgCE1j7dlUKAbWkCeI"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline font-bold text-base text-secondary">LUNA_DETECTIVE</h3>
+<div class="flex items-center gap-1 text-sm font-bold text-on-secondary-container uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="stars">stars</span>
+                            8,210 pts
+                        </div>
+</div>
+<span class="material-symbols-outlined text-3xl text-secondary" data-icon="military_tech" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="relative flex items-center bg-surface-container-high p-4 pixel-shadow">
+<div class="absolute -left-2 top-1/2 -translate-y-1/2 bg-tertiary text-on-tertiary w-8 h-8 flex items-center justify-center font-black font-headline pixel-shadow-sm">3</div>
+<div class="ml-8 flex items-center gap-4 w-full">
+<div class="w-12 h-12 bg-surface-container-lowest border-2 border-tertiary overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="vibrant pixel art character portrait of a robot with glowing cyan eyes and mechanical details on a teal background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR2oZCHboKhnmxfD7grSyfvXODhQg7PNyEYYoCxPrX5VdP71VxS-jhCK_6zT1_S8hrzxV8gZsNl0rEU6npRA9vLxplJLKHMxiD5WiwsQzsTB9cvR2SJoFE003zq4nU2ZIZ6OaTZkTQew-MYlMkpXK-KQVPlygZY2b1iZSSViPr4Bfevk3aYHv2Em62u62ziMIA3wi9DfsKKH59sUYaF1DjK1YX9Z_ncAj3RHWdCAEriIcXlo_DwYgAeAIpKaIDPXv2kSVrXgZCl9RW"/>
+</div>
+<div class="flex-1">
+<h3 class="font-headline font-bold text-base text-tertiary">RETRO_BOT_01</h3>
+<div class="flex items-center gap-1 text-sm font-bold text-on-tertiary-container uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="stars">stars</span>
+                            7,650 pts
+                        </div>
+</div>
+<span class="material-symbols-outlined text-3xl text-tertiary" data-icon="emoji_events" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+</div>
+</section>
+<!-- List of Other Rankings -->
+<section class="space-y-1 bg-surface-container-low p-2">
+<!-- Rank 4 -->
+<div class="flex items-center p-3 bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<span class="w-8 font-headline font-black text-on-surface-variant group-hover:text-primary">4</span>
+<div class="w-10 h-10 bg-surface-container-high mr-3 overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="pixel art head of a cheerful gamer wearing headphones and a cap" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtFbE9JF6RBX6ODCw9_d8FNMrbz1CcgQ-tL2e-UoeWQF467TjEvuqG4EeqZ4KsB-KTzusx7LWzL2mpJ_W2_E73G5WNHLrxtpsKOnDXBf1pcSmUs3sEmKXvmlbNvQhXo0CLlZQH8KG_UN-lHoFusuCXrZGw7ouwHKaJnCj_4qaLNnb3eWMPTOkylop9dSdqvyBQr-HohOjfJCWq0tkH61cyTy25agd8MwMPqmGAvfL9ADhZM8Kk7XWDrTLQFxTmglmvuonVmtEjkJqI"/>
+</div>
+<div class="flex-1">
+<span class="font-bold text-sm">GUESS_WHIZ</span>
+</div>
+<div class="text-right">
+<span class="font-headline font-bold text-sm text-on-surface-variant">6,420</span>
+</div>
+</div>
+<!-- Rank 5 -->
+<div class="flex items-center p-3 bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<span class="w-8 font-headline font-black text-on-surface-variant group-hover:text-primary">5</span>
+<div class="w-10 h-10 bg-surface-container-high mr-3 overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="pixel art head of a calm monk character with a headband" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKo5CH3H384u33oRn9nqE_N1M7z0uxDloocwo-lP-fsEhahOmycCz51qoHVDntI1PwEPrjSH0-JTRKgC_nC6rH4-m5L-GRmaXAW8yJTjZxhanvLtLEZAaEYi9X78-AsRD9biosT9qunxrtP85VC3HGfo3G05sNvdEjkz9pHPgdbnDXNe53xSQvvjqD0QWzFnirCLZwMdxRafjRMJTDqUNWFoMtx6mIcTAN5i5wQgxNpJBuAPFS35qdUIxUBMLta-5QXT7Tm1keZ1ia"/>
+</div>
+<div class="flex-1">
+<span class="font-bold text-sm">MISTY_PIXEL</span>
+</div>
+<div class="text-right">
+<span class="font-headline font-bold text-sm text-on-surface-variant">5,890</span>
+</div>
+</div>
+<!-- Rank 6 -->
+<div class="flex items-center p-3 bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<span class="w-8 font-headline font-black text-on-surface-variant group-hover:text-primary">6</span>
+<div class="w-10 h-10 bg-surface-container-high mr-3 overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="pixel art head of a mysterious ninja with a mask and glowing eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL7uoOcz2nS6kgeDz1MBVgB3ZAxs8AO-zl0vbploYKIN08cKRiT0MIIRAIJM2ZbnuPLgrwYC5JcfRKV5HLwqb6BZE4a1dx18ZXU001Os4ZR_ocRi5lkC7P5giogUekufW650dYj0kLhKfybyrbivPirr-PHjLeJLDQRTPoCJB-p-tB8u5NTvLG-ftVJ9A9nilZmXc9xgJbGyuDn-xR9WhVXEco82qxVM4eZ5_MKRECRnSuFFNWxTIRDldnJZ8zqnb9S9AdMgZ6aC0X"/>
+</div>
+<div class="flex-1">
+<span class="font-bold text-sm">SHADOW_WALKER</span>
+</div>
+<div class="text-right">
+<span class="font-headline font-bold text-sm text-on-surface-variant">5,100</span>
+</div>
+</div>
+<!-- Rank 7 -->
+<div class="flex items-center p-3 bg-surface-container-lowest hover:bg-surface-container transition-colors group">
+<span class="w-8 font-headline font-black text-on-surface-variant group-hover:text-primary">7</span>
+<div class="w-10 h-10 bg-surface-container-high mr-3 overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="pixel art head of an energetic character with spikey yellow hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiS7FwH8hNpDY5sbxAamkRHK2DW31jMQ8LxBKjmObR1N3Ee5TA0dbPlPG82olNbCEx7V0HtCw3Jhr5oZwKZVFg-miQ0Orfp2Hk5rb6n3kwqeEphKtMLHbj9YC2QcBrEHRSTp2iqG073Qp2GNKDaQlw_nN9mrJTmew2Nh_Pzy4KAoqJ4CWTJN8UtMetnEZA6LwmmU14BAT6aRU8l7HAlQkSujw5nW62rpvX5k3onUHOha7uKPINGdgFIzmwPzlnHqksCjwT2Y_pCmcS"/>
+</div>
+<div class="flex-1">
+<span class="font-bold text-sm">SPARKY_GUESS</span>
+</div>
+<div class="text-right">
+<span class="font-headline font-bold text-sm text-on-surface-variant">4,320</span>
+</div>
+</div>
+</section>
+<!-- Floating Player Rank -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-40">
+<div class="bg-inverse-surface text-surface p-4 pixel-shadow border-2 border-primary-container flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-fixed overflow-hidden flex-shrink-0">
+<img alt="My Avatar" class="w-full h-full object-cover" data-alt="pixel art head of the player character with a red bandana and determined expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmt3gEcKNPtvSfRWu20_2mZ6V_E5MQaMoijeEPUuZeJIppFa2MrauUEHHnK3z2QcYy1qUcbGsAKVRElJz6fA_HXgitniQimYP4n98AMo9QbrjHG6ydvJ3r9Vbh6kKqAa587wcSUqJxvyi3lezIrdEhU1lyairr4An8ECl6bTG_UcJe3bi2asYITlh_W-rRp2-aERukXAaZdAokD64fH7ZAz6fRx6sKVils58aALHR691e0wQt8yP6NuhrFtLfPxjO3dHoElW32uWP0"/>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold font-headline text-primary-container uppercase tracking-widest">我的当前排名</p>
+<h4 class="font-headline font-black text-lg text-white">#128 YOU</h4>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold font-headline text-outline-variant uppercase">得分</p>
+<p class="font-headline font-black text-lg text-primary-container">1,240</p>
+</div>
+<div class="bg-primary-container text-primary p-1 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 border-t-4 border-[#6c5a00] dark:border-[#ffd709] bg-[#fff3fd] dark:bg-[#1a0f1d] flex justify-around items-stretch h-20 px-2 pb-safe">
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#ffd709] text-[#6c5a00] p-2 border-b-4 border-[#6c5a00] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">排名</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">商店</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">菜单</span>
+</a>
+</nav>
+</body></html>

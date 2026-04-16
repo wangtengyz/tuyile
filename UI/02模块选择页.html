@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>PIXEL GUESSER - 挑战模式</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Plus+Jakarta+Sans:wght@300..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#00e3fd",
+                        "on-secondary-fixed-variant": "#7520b5",
+                        "background": "#fff3fd",
+                        "on-primary-container": "#5b4b00",
+                        "on-error-container": "#520c00",
+                        "inverse-surface": "#18071e",
+                        "on-error": "#ffefec",
+                        "tertiary-fixed-dim": "#00d4ec",
+                        "error-container": "#f95630",
+                        "error": "#b02500",
+                        "on-secondary-container": "#6b0dab",
+                        "outline": "#866f8c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#f9d8ff",
+                        "secondary-dim": "#741eb4",
+                        "surface-container-low": "#feebff",
+                        "surface-container": "#fbdfff",
+                        "outline-variant": "#bfa5c4",
+                        "on-tertiary-fixed-variant": "#005762",
+                        "on-primary-fixed-variant": "#665500",
+                        "surface-container-highest": "#f5d1fd",
+                        "surface": "#fff3fd",
+                        "tertiary-container": "#00e3fd",
+                        "surface-variant": "#f5d1fd",
+                        "surface-tint": "#6c5a00",
+                        "inverse-primary": "#ffd709",
+                        "on-secondary-fixed": "#510085",
+                        "on-tertiary": "#d8f8ff",
+                        "primary": "#6c5a00",
+                        "on-surface-variant": "#6a546f",
+                        "surface-bright": "#fff3fd",
+                        "primary-fixed": "#ffd709",
+                        "on-tertiary-container": "#004d57",
+                        "secondary-container": "#e7c5ff",
+                        "on-background": "#3b2841",
+                        "primary-fixed-dim": "#efc900",
+                        "on-surface": "#3b2841",
+                        "error-dim": "#b92902",
+                        "on-tertiary-fixed": "#003840",
+                        "surface-dim": "#eec8f6",
+                        "secondary-fixed-dim": "#deb3ff",
+                        "inverse-on-surface": "#ae95b3",
+                        "secondary": "#812fc1",
+                        "on-primary-fixed": "#453900",
+                        "tertiary-dim": "#005863",
+                        "tertiary": "#006571",
+                        "primary-dim": "#5e4e00",
+                        "primary-container": "#ffd709",
+                        "secondary-fixed": "#e7c5ff",
+                        "on-primary": "#fff2cd",
+                        "on-secondary": "#fceeff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.0rem",
+                        "lg": "0.0rem",
+                        "xl": "0.0rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fff3fd;
+        }
+        .pixel-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(59, 40, 65, 0.08);
+        }
+        .pixel-border-heavy {
+            border-bottom: 4px solid #6c5a00;
+        }
+        .active-tab-border {
+            border-bottom: 4px solid #6c5a00;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fff3fd] dark:bg-[#1a0f1d] shadow-[4px_4px_0px_0px_rgba(59,40,65,0.08)]">
+<div class="flex justify-between items-center px-4 h-16 w-full max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#6c5a00] dark:text-[#ffd709]" data-icon="videogame_asset">videogame_asset</span>
+<h1 class="font-['Space_Grotesk'] font-black tracking-tighter uppercase text-xl text-[#6c5a00] dark:text-[#ffd709]">PIXEL GUESSER</h1>
+</div>
+<div class="flex items-center gap-1 bg-primary-container px-2 py-1">
+<span class="material-symbols-outlined text-on-primary-container text-sm" data-icon="monetization_on" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-headline font-bold text-xs text-on-primary-container">1,250</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-6 max-w-md mx-auto">
+<!-- Section Header -->
+<div class="mb-8">
+<h2 class="font-headline text-2xl font-black uppercase tracking-tight text-on-surface leading-none mb-2">选择你的挑战模式</h2>
+<div class="h-1.5 w-24 bg-primary"></div>
+</div>
+<!-- Vertical Card Layout (Bento-ish stack) -->
+<div class="space-y-8">
+<!-- Card: 儿童启蒙版 -->
+<div class="relative group">
+<div class="bg-surface-container-low p-1 transform transition-transform active:translate-y-1">
+<div class="bg-surface-container-lowest p-5 relative overflow-hidden">
+<!-- Aesthetic Background Element (Dithered Feel) -->
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-tertiary-container opacity-20 rotate-12"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="face">face</span>
+<div class="flex gap-2">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 uppercase">Lvl 1-3</span>
+</div>
+</div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-2">儿童启蒙版</h3>
+<p class="text-on-surface-variant text-sm font-medium mb-6 leading-relaxed">
+                                专为小朋友设计的简单像素图，包含水果、小动物和生活用品，快乐识物。
+                            </p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#简单</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#可爱</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#学习</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-black py-4 px-6 pixel-border-heavy flex justify-between items-center active:translate-y-0.5 active:border-b-2 transition-all">
+<span>开始挑战</span>
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: 全民脑洞版 -->
+<div class="relative group">
+<div class="bg-surface-container-low p-1 transform transition-transform active:translate-y-1">
+<div class="bg-surface-container-lowest p-5 relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-secondary-container opacity-20 -rotate-12"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="psychology">psychology</span>
+<div class="flex gap-2">
+<span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-0.5 uppercase">Hard Mode</span>
+</div>
+</div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-2">全民脑洞版</h3>
+<p class="text-on-surface-variant text-sm font-medium mb-6 leading-relaxed">
+                                抽象像素艺术的极致考验。只有你想不到，没有我们拼不出的脑洞大作。
+                            </p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#烧脑</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#抽象</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#热门</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-black py-4 px-6 pixel-border-heavy flex justify-between items-center active:translate-y-0.5 active:border-b-2 transition-all">
+<span>立即进入</span>
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: 热门主题版 -->
+<div class="relative group">
+<div class="bg-surface-container-low p-1 transform transition-transform active:translate-y-1">
+<div class="bg-surface-container-lowest p-5 relative overflow-hidden">
+<div class="absolute -left-4 -top-4 w-20 h-20 bg-primary-container opacity-20 rounded-full"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="star">star</span>
+<div class="flex gap-2">
+<span class="bg-tertiary-container text-on-tertiary-container text-[10px] font-bold px-2 py-0.5 uppercase">Limited</span>
+</div>
+</div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-2">热门主题版</h3>
+<p class="text-on-surface-variant text-sm font-medium mb-6 leading-relaxed">
+                                定期更新的主题活动。电影、名画、地标建筑，在特定领域证明你的实力。
+                            </p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#限时</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#文化</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1">#收集</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-black py-4 px-6 pixel-border-heavy flex justify-between items-center active:translate-y-0.5 active:border-b-2 transition-all">
+<span>查看主题</span>
+<span class="material-symbols-outlined" data-icon="category">category</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Warm Tip: Comic Speech Bubble style -->
+<div class="mt-12 mb-8 relative">
+<div class="bg-surface-container-highest p-4 relative">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+<p class="text-xs font-bold text-on-surface-variant leading-relaxed">
+                        温馨提示：猜不出时可以使用底部的提示道具哦！每天登录即送免费体力，快去开启你的像素冒险吧。
+                    </p>
+</div>
+<!-- Pixel tail -->
+<div class="absolute -bottom-2 left-6 w-4 h-4 bg-surface-container-highest rotate-45"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-[#fff3fd] dark:bg-[#1a0f1d] border-t-4 border-[#6c5a00] dark:border-[#ffd709]">
+<div class="flex justify-around items-stretch w-full h-20 px-2 pb-safe">
+<!-- Home (Inactive) -->
+<div class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">首页</span>
+</div>
+<!-- Leaderboard (Inactive) -->
+<div class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">排名</span>
+</div>
+<!-- Shop (Inactive) -->
+<div class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] p-2 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] active:translate-y-1 transition-all">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">商店</span>
+</div>
+<!-- Menu (Active) - Mapped to the current screen context of selecting modes/menu items -->
+<div class="flex flex-col items-center justify-center bg-[#ffd709] text-[#6c5a00] p-2 border-b-4 border-[#6c5a00] active:translate-y-1 transition-all">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">菜单</span>
+</div>
+</div>
+</nav>
+</body></html>

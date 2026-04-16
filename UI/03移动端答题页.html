@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#eec8f6",
+                    "on-tertiary": "#d8f8ff",
+                    "on-secondary-fixed-variant": "#7520b5",
+                    "secondary-fixed": "#e7c5ff",
+                    "outline": "#866f8c",
+                    "on-primary-fixed-variant": "#665500",
+                    "surface-container-high": "#f9d8ff",
+                    "primary-fixed": "#ffd709",
+                    "on-error-container": "#520c00",
+                    "on-primary-fixed": "#453900",
+                    "surface": "#fff3fd",
+                    "surface-container-low": "#feebff",
+                    "surface-bright": "#fff3fd",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-dim": "#5e4e00",
+                    "on-secondary-fixed": "#510085",
+                    "primary-container": "#ffd709",
+                    "surface-tint": "#6c5a00",
+                    "error-dim": "#b92902",
+                    "on-error": "#ffefec",
+                    "tertiary": "#006571",
+                    "on-secondary-container": "#6b0dab",
+                    "on-surface": "#3b2841",
+                    "inverse-surface": "#18071e",
+                    "secondary-container": "#e7c5ff",
+                    "surface-variant": "#f5d1fd",
+                    "primary": "#6c5a00",
+                    "on-surface-variant": "#6a546f",
+                    "inverse-primary": "#ffd709",
+                    "surface-container": "#fbdfff",
+                    "secondary-dim": "#741eb4",
+                    "on-primary-container": "#5b4b00",
+                    "on-tertiary-fixed-variant": "#005762",
+                    "tertiary-fixed-dim": "#00d4ec",
+                    "outline-variant": "#bfa5c4",
+                    "error-container": "#f95630",
+                    "on-background": "#3b2841",
+                    "on-secondary": "#fceeff",
+                    "secondary-fixed-dim": "#deb3ff",
+                    "inverse-on-surface": "#ae95b3",
+                    "error": "#b02500",
+                    "background": "#fff3fd",
+                    "secondary": "#812fc1",
+                    "tertiary-dim": "#005863",
+                    "primary-fixed-dim": "#efc900",
+                    "on-primary": "#fff2cd",
+                    "tertiary-container": "#00e3fd",
+                    "tertiary-fixed": "#00e3fd",
+                    "on-tertiary-fixed": "#003840",
+                    "on-tertiary-container": "#004d57",
+                    "surface-container-highest": "#f5d1fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .pixel-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(59, 40, 65, 0.15);
+        }
+        .pixel-shadow-heavy {
+            box-shadow: 6px 6px 0px 0px #3b2841;
+        }
+        .pixel-border-bottom {
+            box-shadow: 0px 4px 0px 0px #6c5a00;
+        }
+        .pixel-inset {
+            box-shadow: inset 4px 4px 0px 0px rgba(59, 40, 65, 0.1);
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface selection:bg-primary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 flex items-center justify-between px-4 h-16 bg-[#fff3fd] dark:bg-[#1a121c] shadow-[4px_4px_0px_0px_rgba(59,40,65,0.08)]">
+<div class="flex items-center gap-3">
+<div class="active:scale-95 transition-all text-[#6c5a00] dark:text-[#ffd709] hover:translate-y-0.5 transition-transform">
+<span class="material-symbols-outlined text-2xl" data-icon="videogame_asset">videogame_asset</span>
+</div>
+<h1 class="font-['Space_Grotesk'] font-bold tracking-tighter uppercase text-xl font-black text-[#6c5a00] dark:text-[#ffd709]">猜图页</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-highest px-3 py-1 flex items-center gap-2 pixel-shadow">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-headline font-bold text-on-surface">1,250</span>
+</div>
+<div class="active:scale-95 transition-all text-[#6c5a00] dark:text-[#ffd709] hover:translate-y-0.5 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</div>
+</div>
+</nav>
+<main class="pt-20 pb-28 px-4 flex flex-col items-center min-h-screen">
+<!-- Status Bar from TEXT_18 -->
+<div class="w-full flex justify-between items-end mb-6">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">第04题</span>
+<div class="bg-tertiary-container text-on-tertiary-container font-headline font-extrabold px-3 py-1 text-lg">儿童启蒙版</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">已答对：12</span>
+<div class="font-headline font-black text-2xl text-error">连对：5</div>
+</div>
+</div>
+<!-- Center Stage: Unified Education Card -->
+<div class="w-full max-w-sm">
+<div class="bg-surface-container-lowest p-3 pixel-shadow-heavy flex flex-col gap-3 relative">
+<!-- Top Section: The Known -->
+<div class="bg-surface-container-low p-2">
+<div class="relative group">
+<div class="absolute top-2 left-2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 z-10">LEARNED!</div>
+<div class="aspect-[4/3] w-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="cute pink cartoon pig sitting in a green meadow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmXIgp4BGroHMUuwe_4LZQ3_XzkD2y8bNrpkDhDDOFZ5ptnE0ZH_Vt86Egy30Eeo3m068EsS6LsU2AwLLLWgKgfb8pDDNXlvLhT6ji4B9nhm6pUwVYtwPER_9By68o4-FE4WWevl1WCu9vxITN52O82xkT8Et0CwjomIKEG11GJCXGTbZGro-3HaySAvG1dAtMiL5pCGmBldvm2asjPzj_pj7d3QwPF_iX4R2I40XqU1MPVvEJJfTZZM6alhBd8qoQjjiuwPR8w9lx"/>
+</div>
+</div>
+<div class="mt-2 bg-surface-container-highest p-2 flex justify-center items-center">
+<span class="font-headline text-xl font-bold tracking-tight text-on-surface">这是猪</span>
+</div>
+</div>
+<!-- Visual Divider -->
+<div class="flex justify-center -my-1 relative z-20">
+<div class="bg-primary-container p-1.5 border-2 border-on-surface rotate-45">
+<span class="material-symbols-outlined text-on-primary-container text-xs -rotate-45 block font-bold" data-icon="arrow_downward">arrow_downward</span>
+</div>
+</div>
+<!-- Bottom Section: The Challenge -->
+<div class="bg-surface-container-low p-2">
+<div class="aspect-[4/3] w-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="cute pig wearing glasses and knitting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-KwNP6zL5cMrKV9AN7c8OAyuSsVpwDidrGV3a5bmY0Py018qzhRMjZAV6x-bhT65PU0zNRW1ie3gZk07L0WIOQjbu68_U3vuCcaPl9GA7j_w7ERYnI-lkQ-Kb2Rn83SJnQUPIijVzza0ahSd42I6m2d_ryiyQXBV1N2CUhiscxzC6_VrdlOc_mxCxxfPZnY9Ibl1w_edq0VWoNkeeAHNpBrFAj_a1elZ0Z1eIRl7X7I6fyyb4Vmp2Eh8lyQ-fsMmnA4iVDKs4kYVk"/>
+</div>
+<div class="mt-2 bg-secondary-container p-2 flex justify-center items-center">
+<span class="font-headline text-xl font-bold tracking-tight text-on-secondary-container">这是<span class="border-b-4 border-on-secondary-container px-2 mx-1 inline-block min-w-[3rem] text-center text-on-secondary-container opacity-40">__</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Random Text from TEXT_18 -->
+<div class="mt-6 relative w-full max-w-xs">
+<div class="bg-surface-container-highest p-4 pixel-shadow relative">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-bottom-[12px] border-b-surface-container-highest"></div>
+<p class="text-sm font-medium text-center italic text-on-surface">“别被第一眼骗了，出题人很坏”</p>
+</div>
+</div>
+<!-- Input Area & Action -->
+<div class="mt-6 w-full max-w-sm space-y-4">
+<div class="flex gap-2 justify-center">
+<input class="w-16 h-16 text-center text-3xl font-headline font-black bg-surface-container-lowest border-4 border-on-surface focus:ring-0 focus:border-tertiary transition-colors pixel-inset uppercase" maxlength="1" placeholder="?" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="h-14 bg-surface-container-high text-on-surface font-headline font-bold text-sm pixel-border-bottom active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="lightbulb">lightbulb</span>
+                    偷看一点点
+                </button>
+<button class="h-14 bg-primary-container text-on-primary-container font-headline font-black text-lg pixel-border-bottom active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    我猜这个
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 border-t-0 flex justify-around items-center h-20 pb-safe bg-[#fff3fd] dark:bg-[#1a121c] shadow-[0px_-4px_0px_0px_rgba(59,40,65,0.08)]">
+<button class="flex flex-col items-center justify-center bg-[#ffd709] text-[#6c5a00] border-b-4 border-[#6c5a00] px-4 py-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined" data-icon="sports_esports" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">PLAY</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] px-4 py-1 opacity-70 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] transition-colors active:translate-y-1">
+<span class="material-symbols-outlined" data-icon="style">style</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">DEX</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] px-4 py-1 opacity-70 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] transition-colors active:translate-y-1">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">QUESTS</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3b2841] dark:text-[#bfa5c4] px-4 py-1 opacity-70 hover:bg-[#f5d1fd] dark:hover:bg-[#3b2841] transition-colors active:translate-y-1">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">SHOP</span>
+</button>
+</nav>
+</body></html>
