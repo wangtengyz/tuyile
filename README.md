@@ -19,6 +19,9 @@ npm run build
 npm run preview
 ```
 
+# 发布github
+bash ./deploy.sh
+
 ## 技术架构
 
 ### 技术栈

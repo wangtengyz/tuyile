@@ -1,7 +1,8 @@
 # deploy.sh
 # 错误时停止
 set -e
-
+# 1、打包
+yarn build
 # 2、进入目标文件夹，这里跟项目打包输出的文件夹相同（如果项目中不修改默认为：dist）
 cd dist
 
