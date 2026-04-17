@@ -1,0 +1,808 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>雪碧图先总裁剪再九等分工具</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 16px;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .panel, .viewer {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .panel { display: flex; flex-direction: column; }
+    .section {
+      padding: 16px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .section:last-child { border-bottom: none; }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    .desc, .tips, .footer, .help, .meta {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    label.small {
+      font-size: 12px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 4px;
+    }
+    input[type="file"], input[type="number"], input[type="text"] {
+      width: 100%;
+    }
+    input[type="number"], input[type="text"] {
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    button.mode {
+      background: #f3f4f6;
+      color: #111827;
+    }
+    button.mode.active {
+      background: #111827;
+      color: white;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .cards {
+      max-height: calc(100vh - 460px);
+      overflow: auto;
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fafafa;
+    }
+    .card.active {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
+      background: #f8fbff;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .viewer {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 520px;
+      background:
+        linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
+        linear-gradient(-45deg, #f3f4f6 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f3f4f6 75%),
+        linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
+      border-radius: 12px;
+      overflow: auto;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 12px;
+    }
+    #previewCanvas {
+      display: block;
+      max-width: none;
+      image-rendering: pixelated;
+      cursor: crosshair;
+      background: white;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      .cards { max-height: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="panel">
+      <div class="section">
+        <h1>雪碧图先总裁剪再九等分工具</h1>
+        <div class="desc">
+          先对整张图片做一次总裁剪，再基于这个总裁剪区域平均切成 3×3 共 9 张。之后你仍然可以对 9 张中的任意一张继续微调位置和尺寸。
+        </div>
+      </div>
+
+      <div class="section">
+        <label class="small">上传图片</label>
+        <input id="fileInput" type="file" accept="image/*" />
+
+        <div class="row" style="margin-top:12px;">
+          <div style="width:100%;">
+            <label class="small">起始文件名（例如：children-1）</label>
+            <input id="baseNameInput" type="text" value="children-1" />
+          </div>
+        </div>
+
+        <div class="tips">
+          规则：输入 <b>children-1</b> 会导出 children-1 ~ children-9；输入 <b>children-01</b> 会保留前导 0。<br />
+          推荐使用 Chrome / Edge，支持直接选择文件夹并一次写入 9 张；不支持时可改用 ZIP 导出。
+        </div>
+
+        <div class="row">
+          <button id="exportAllBtn" disabled>导出到文件夹</button>
+          <button id="exportZipBtn" class="secondary" disabled>导出 ZIP</button>
+          <button id="resetBtn" class="secondary">全部重置</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="desc">步骤 1：先裁剪整张图片</div>
+        <div class="row">
+          <button id="modeBaseBtn" class="mode active">编辑总裁剪框</button>
+          <button id="applyBaseCropBtn" class="secondary">应用总裁剪并九等分</button>
+          <button id="resetBaseCropBtn" class="secondary">总裁剪恢复整图</button>
+        </div>
+        <div class="preset-grid">
+          <div>
+            <label class="small">总裁剪 X</label>
+            <input id="baseCropX" type="number" value="0" min="0" />
+          </div>
+          <div>
+            <label class="small">总裁剪 Y</label>
+            <input id="baseCropY" type="number" value="0" min="0" />
+          </div>
+          <div>
+            <label class="small">总裁剪宽</label>
+            <input id="baseCropW" type="number" value="100" min="1" />
+          </div>
+          <div>
+            <label class="small">总裁剪高</label>
+            <input id="baseCropH" type="number" value="100" min="1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="desc">步骤 2：再对 9 张切片微调</div>
+        <div class="row">
+          <button id="modeSliceBtn" class="mode secondary">编辑单张切片</button>
+          <button id="fillAverageBtn" class="secondary">基于总裁剪重新平均九等分</button>
+          <button id="fill3x3Btn" class="secondary">按自定义 3×3 填充</button>
+        </div>
+        <div class="preset-grid">
+          <div>
+            <label class="small">切片起始 X（相对总裁剪）</label>
+            <input id="startX" type="number" value="0" min="0" />
+          </div>
+          <div>
+            <label class="small">切片起始 Y（相对总裁剪）</label>
+            <input id="startY" type="number" value="0" min="0" />
+          </div>
+          <div>
+            <label class="small">单张宽度</label>
+            <input id="cellW" type="number" value="100" min="1" />
+          </div>
+          <div>
+            <label class="small">单张高度</label>
+            <input id="cellH" type="number" value="100" min="1" />
+          </div>
+          <div>
+            <label class="small">横向间距</label>
+            <input id="gapX" type="number" value="0" min="0" />
+          </div>
+          <div>
+            <label class="small">纵向间距</label>
+            <input id="gapY" type="number" value="0" min="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-bottom:8px;">
+        <div class="desc">9 张图片裁剪参数（这里的坐标是基于原图坐标）</div>
+      </div>
+
+      <div class="cards" id="cardsContainer"></div>
+
+      <div class="section footer">
+        用法：上传图片 → 先拖出总裁剪框 → 点击“应用总裁剪并九等分” → 需要的话继续微调单张切片 → 选择文件夹导出。
+      </div>
+    </div>
+
+    <div class="viewer">
+      <div class="toolbar">
+        <div class="meta" id="imageMeta">未上传图片</div>
+        <div class="help">
+          <span class="badge" id="modeBadge">当前：编辑总裁剪框</span>
+          蓝色为总裁剪区域，红色为 9 张切片范围，深蓝为当前选中的单张切片。
+        </div>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="previewCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const baseNameInput = document.getElementById('baseNameInput');
+    const exportAllBtn = document.getElementById('exportAllBtn');
+    const exportZipBtn = document.getElementById('exportZipBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const modeBaseBtn = document.getElementById('modeBaseBtn');
+    const modeSliceBtn = document.getElementById('modeSliceBtn');
+    const applyBaseCropBtn = document.getElementById('applyBaseCropBtn');
+    const resetBaseCropBtn = document.getElementById('resetBaseCropBtn');
+    const fillAverageBtn = document.getElementById('fillAverageBtn');
+    const fill3x3Btn = document.getElementById('fill3x3Btn');
+    const modeBadge = document.getElementById('modeBadge');
+
+    const baseCropXInput = document.getElementById('baseCropX');
+    const baseCropYInput = document.getElementById('baseCropY');
+    const baseCropWInput = document.getElementById('baseCropW');
+    const baseCropHInput = document.getElementById('baseCropH');
+
+    const startXInput = document.getElementById('startX');
+    const startYInput = document.getElementById('startY');
+    const cellWInput = document.getElementById('cellW');
+    const cellHInput = document.getElementById('cellH');
+    const gapXInput = document.getElementById('gapX');
+    const gapYInput = document.getElementById('gapY');
+
+    const cardsContainer = document.getElementById('cardsContainer');
+    const previewCanvas = document.getElementById('previewCanvas');
+    const ctx = previewCanvas.getContext('2d');
+    const imageMeta = document.getElementById('imageMeta');
+
+    const cropList = Array.from({ length: 9 }, () => ({ x: 0, y: 0, width: 100, height: 100 }));
+
+    let image = null;
+    let scale = 1;
+    let activeIndex = 0;
+    let editMode = 'base';
+    let isDragging = false;
+    let dragStart = null;
+    let dragCurrent = null;
+
+    const baseCrop = { x: 0, y: 0, width: 100, height: 100 };
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
+    }
+
+    function syncBaseCropInputs() {
+      baseCropXInput.value = baseCrop.x;
+      baseCropYInput.value = baseCrop.y;
+      baseCropWInput.value = baseCrop.width;
+      baseCropHInput.value = baseCrop.height;
+    }
+
+    function sanitizeBaseCrop() {
+      if (!image) return;
+      baseCrop.x = clamp(Math.round(baseCrop.x), 0, Math.max(0, image.width - 1));
+      baseCrop.y = clamp(Math.round(baseCrop.y), 0, Math.max(0, image.height - 1));
+      baseCrop.width = clamp(Math.round(baseCrop.width), 1, image.width - baseCrop.x);
+      baseCrop.height = clamp(Math.round(baseCrop.height), 1, image.height - baseCrop.y);
+      syncBaseCropInputs();
+    }
+
+    function setEditMode(mode) {
+      editMode = mode;
+      modeBaseBtn.classList.toggle('active', mode === 'base');
+      modeSliceBtn.classList.toggle('active', mode === 'slice');
+      modeBadge.textContent = mode === 'base' ? '当前：编辑总裁剪框' : `当前：编辑第 ${activeIndex + 1} 张切片`;
+      drawPreview();
+    }
+
+    function renderCards() {
+      cardsContainer.innerHTML = '';
+      cropList.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = `card ${index === activeIndex ? 'active' : ''}`;
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="card-title">第 ${index + 1} 张</div>
+            <button type="button" class="secondary select-btn">编辑切片</button>
+          </div>
+          <div class="grid4">
+            <div>
+              <label class="small">X</label>
+              <input type="number" data-key="x" data-index="${index}" value="${item.x}" min="0" />
+            </div>
+            <div>
+              <label class="small">Y</label>
+              <input type="number" data-key="y" data-index="${index}" value="${item.y}" min="0" />
+            </div>
+            <div>
+              <label class="small">宽</label>
+              <input type="number" data-key="width" data-index="${index}" value="${item.width}" min="1" />
+            </div>
+            <div>
+              <label class="small">高</label>
+              <input type="number" data-key="height" data-index="${index}" value="${item.height}" min="1" />
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.select-btn').addEventListener('click', () => {
+          activeIndex = index;
+          setEditMode('slice');
+          renderCards();
+        });
+
+        card.querySelectorAll('input').forEach(input => {
+          input.addEventListener('input', (e) => {
+            const idx = Number(e.target.dataset.index);
+            const key = e.target.dataset.key;
+            const value = Number(e.target.value || 0);
+            cropList[idx][key] = key === 'width' || key === 'height' ? Math.max(1, value) : Math.max(0, value);
+            drawPreview();
+          });
+        });
+
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function getFitScale(imgW, imgH) {
+      const maxW = Math.min(window.innerWidth - 540, 1200);
+      const maxH = Math.min(window.innerHeight - 120, 920);
+      if (maxW <= 0 || maxH <= 0) return 1;
+      return Math.min(maxW / imgW, maxH / imgH, 1);
+    }
+
+    function drawRect(rect, stroke, fill, lineWidth, label) {
+      const x = rect.x * scale;
+      const y = rect.y * scale;
+      const w = rect.width * scale;
+      const h = rect.height * scale;
+      ctx.save();
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = stroke;
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fillRect(x, y, w, h);
+      }
+      ctx.strokeRect(x, y, w, h);
+      if (label) {
+        ctx.fillStyle = stroke;
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(label, x + 6, y + 18);
+      }
+      ctx.restore();
+    }
+
+    function drawPreview() {
+      if (!image) {
+        ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+        previewCanvas.width = 0;
+        previewCanvas.height = 0;
+        imageMeta.textContent = '未上传图片';
+        return;
+      }
+
+      sanitizeBaseCrop();
+      scale = getFitScale(image.width, image.height);
+      previewCanvas.width = Math.round(image.width * scale);
+      previewCanvas.height = Math.round(image.height * scale);
+
+      ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      ctx.drawImage(image, 0, 0, previewCanvas.width, previewCanvas.height);
+
+      drawRect(baseCrop, '#2563eb', 'rgba(37,99,235,0.10)', editMode === 'base' ? 3 : 2, '总');
+
+      cropList.forEach((crop, index) => {
+        drawRect(
+          crop,
+          index === activeIndex ? '#1d4ed8' : '#ef4444',
+          index === activeIndex ? 'rgba(29,78,216,0.12)' : 'rgba(239,68,68,0.05)',
+          index === activeIndex ? 3 : 2,
+          String(index + 1)
+        );
+      });
+
+      if (isDragging && dragStart && dragCurrent) {
+        const rx = Math.min(dragStart.x, dragCurrent.x);
+        const ry = Math.min(dragStart.y, dragCurrent.y);
+        const rw = Math.abs(dragCurrent.x - dragStart.x);
+        const rh = Math.abs(dragCurrent.y - dragStart.y);
+        ctx.save();
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#10b981';
+        ctx.fillStyle = 'rgba(16,185,129,0.10)';
+        ctx.fillRect(rx, ry, rw, rh);
+        ctx.strokeRect(rx, ry, rw, rh);
+        ctx.restore();
+      }
+
+      imageMeta.textContent = `原图尺寸：${image.width} × ${image.height} ｜ 总裁剪：${baseCrop.x}, ${baseCrop.y}, ${baseCrop.width}, ${baseCrop.height} ｜ 预览缩放：${(scale * 100).toFixed(1)}%`;
+    }
+
+    function fillAverage3x3FromBaseCrop() {
+      if (!image) return;
+      sanitizeBaseCrop();
+
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          const idx = row * 3 + col;
+          const x1 = baseCrop.x + Math.round(col * baseCrop.width / 3);
+          const x2 = baseCrop.x + Math.round((col + 1) * baseCrop.width / 3);
+          const y1 = baseCrop.y + Math.round(row * baseCrop.height / 3);
+          const y2 = baseCrop.y + Math.round((row + 1) * baseCrop.height / 3);
+
+          cropList[idx].x = x1;
+          cropList[idx].y = y1;
+          cropList[idx].width = x2 - x1;
+          cropList[idx].height = y2 - y1;
+        }
+      }
+
+      startXInput.value = 0;
+      startYInput.value = 0;
+      cellWInput.value = Math.floor(baseCrop.width / 3);
+      cellHInput.value = Math.floor(baseCrop.height / 3);
+      gapXInput.value = 0;
+      gapYInput.value = 0;
+
+      renderCards();
+      drawPreview();
+    }
+
+    function applyBaseCropAndSplit() {
+      fillAverage3x3FromBaseCrop();
+      setEditMode('slice');
+      renderCards();
+    }
+
+    function fill3x3Custom() {
+      if (!image) return;
+      sanitizeBaseCrop();
+
+      const startX = Math.max(0, Number(startXInput.value || 0));
+      const startY = Math.max(0, Number(startYInput.value || 0));
+      const cellW = Math.max(1, Number(cellWInput.value || 1));
+      const cellH = Math.max(1, Number(cellHInput.value || 1));
+      const gapX = Math.max(0, Number(gapXInput.value || 0));
+      const gapY = Math.max(0, Number(gapYInput.value || 0));
+
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          const idx = row * 3 + col;
+          cropList[idx].x = baseCrop.x + startX + col * (cellW + gapX);
+          cropList[idx].y = baseCrop.y + startY + row * (cellH + gapY);
+          cropList[idx].width = cellW;
+          cropList[idx].height = cellH;
+        }
+      }
+
+      renderCards();
+      drawPreview();
+    }
+
+    function resetBaseCropToImage() {
+      if (!image) return;
+      baseCrop.x = 0;
+      baseCrop.y = 0;
+      baseCrop.width = image.width;
+      baseCrop.height = image.height;
+      syncBaseCropInputs();
+      drawPreview();
+    }
+
+    function resetAll() {
+      if (!image) return;
+      resetBaseCropToImage();
+      baseNameInput.value = 'children-1';
+      fillAverage3x3FromBaseCrop();
+      activeIndex = 0;
+      setEditMode('base');
+      renderCards();
+      drawPreview();
+    }
+
+    function cropOne(crop) {
+      if (!image) return null;
+      const x = clamp(Math.round(crop.x), 0, image.width - 1);
+      const y = clamp(Math.round(crop.y), 0, image.height - 1);
+      const maxW = image.width - x;
+      const maxH = image.height - y;
+      const w = clamp(Math.round(crop.width), 1, Math.max(1, maxW));
+      const h = clamp(Math.round(crop.height), 1, Math.max(1, maxH));
+      const out = document.createElement('canvas');
+      out.width = w;
+      out.height = h;
+      const outCtx = out.getContext('2d');
+      outCtx.drawImage(image, x, y, w, h, 0, 0, w, h);
+      return out;
+    }
+
+    function canvasToBlob(canvas) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('生成图片文件失败'));
+        }, 'image/png');
+      });
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function generateFileNames(count = 9) {
+      const baseName = (baseNameInput.value || 'children-1').trim();
+      const match = baseName.match(/^(.*?)(\d+)$/);
+      const names = [];
+      if (match) {
+        const prefix = match[1];
+        const startNumText = match[2];
+        const startNum = parseInt(startNumText, 10);
+        const padLength = startNumText.length;
+        for (let i = 0; i < count; i++) {
+          names.push(`${prefix}${String(startNum + i).padStart(padLength, '0')}`);
+        }
+      } else {
+        for (let i = 0; i < count; i++) names.push(`${baseName}${i + 1}`);
+      }
+      return names;
+    }
+
+    async function exportToFolder() {
+      if (!image) return;
+      const fileNames = generateFileNames(cropList.length);
+
+      if (!window.showDirectoryPicker) {
+        alert('当前浏览器不支持直接导出到文件夹，将改用 ZIP 导出。');
+        await exportAsZip();
+        return;
+      }
+
+      try {
+        const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+        for (let i = 0; i < cropList.length; i++) {
+          const canvas = cropOne(cropList[i]);
+          if (!canvas) continue;
+          const blob = await canvasToBlob(canvas);
+          const fileHandle = await dirHandle.getFileHandle(`${fileNames[i]}.png`, { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+        }
+        alert('已成功导出到所选文件夹。');
+      } catch (error) {
+        if (error && error.name === 'AbortError') return;
+        console.error(error);
+        alert('导出到文件夹失败，将改用 ZIP 导出。');
+        await exportAsZip();
+      }
+    }
+
+    async function exportAsZip() {
+      if (!image) return;
+      if (typeof JSZip === 'undefined') {
+        alert('ZIP 组件未加载成功，无法导出 ZIP。');
+        return;
+      }
+
+      const fileNames = generateFileNames(cropList.length);
+      const zip = new JSZip();
+      for (let i = 0; i < cropList.length; i++) {
+        const canvas = cropOne(cropList[i]);
+        if (!canvas) continue;
+        const blob = await canvasToBlob(canvas);
+        zip.file(`${fileNames[i]}.png`, blob);
+      }
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const zipName = `${(baseNameInput.value || 'images').trim() || 'images'}-exports.zip`;
+      downloadBlob(zipBlob, zipName);
+    }
+
+    async function exportAll() {
+      await exportToFolder();
+    }
+
+    function getCanvasPos(evt) {
+      const rect = previewCanvas.getBoundingClientRect();
+      return {
+        x: clamp(evt.clientX - rect.left, 0, previewCanvas.width),
+        y: clamp(evt.clientY - rect.top, 0, previewCanvas.height),
+      };
+    }
+
+    function updateDragPreview(evt) {
+      if (!isDragging || !image) return;
+      dragCurrent = getCanvasPos(evt);
+      drawPreview();
+    }
+
+    previewCanvas.addEventListener('mousedown', (evt) => {
+      if (!image) return;
+      isDragging = true;
+      dragStart = getCanvasPos(evt);
+      dragCurrent = dragStart;
+      drawPreview();
+    });
+
+    window.addEventListener('mousemove', updateDragPreview);
+
+    window.addEventListener('mouseup', () => {
+      if (!isDragging || !image || !dragStart || !dragCurrent) return;
+
+      const x1 = Math.min(dragStart.x, dragCurrent.x);
+      const y1 = Math.min(dragStart.y, dragCurrent.y);
+      const x2 = Math.max(dragStart.x, dragCurrent.x);
+      const y2 = Math.max(dragStart.y, dragCurrent.y);
+
+      const rect = {
+        x: Math.round(x1 / scale),
+        y: Math.round(y1 / scale),
+        width: Math.max(1, Math.round((x2 - x1) / scale)),
+        height: Math.max(1, Math.round((y2 - y1) / scale)),
+      };
+
+      if (editMode === 'base') {
+        baseCrop.x = rect.x;
+        baseCrop.y = rect.y;
+        baseCrop.width = rect.width;
+        baseCrop.height = rect.height;
+        sanitizeBaseCrop();
+        syncBaseCropInputs();
+      } else {
+        cropList[activeIndex].x = rect.x;
+        cropList[activeIndex].y = rect.y;
+        cropList[activeIndex].width = rect.width;
+        cropList[activeIndex].height = rect.height;
+        renderCards();
+      }
+
+      isDragging = false;
+      dragStart = null;
+      dragCurrent = null;
+      drawPreview();
+    });
+
+    [baseCropXInput, baseCropYInput, baseCropWInput, baseCropHInput].forEach((input, idx) => {
+      input.addEventListener('input', () => {
+        const values = [
+          Number(baseCropXInput.value || 0),
+          Number(baseCropYInput.value || 0),
+          Number(baseCropWInput.value || 1),
+          Number(baseCropHInput.value || 1),
+        ];
+        baseCrop.x = Math.max(0, values[0]);
+        baseCrop.y = Math.max(0, values[1]);
+        baseCrop.width = Math.max(1, values[2]);
+        baseCrop.height = Math.max(1, values[3]);
+        sanitizeBaseCrop();
+        drawPreview();
+      });
+    });
+
+    modeBaseBtn.addEventListener('click', () => setEditMode('base'));
+    modeSliceBtn.addEventListener('click', () => setEditMode('slice'));
+    applyBaseCropBtn.addEventListener('click', applyBaseCropAndSplit);
+    resetBaseCropBtn.addEventListener('click', resetBaseCropToImage);
+    fillAverageBtn.addEventListener('click', fillAverage3x3FromBaseCrop);
+    fill3x3Btn.addEventListener('click', fill3x3Custom);
+    exportAllBtn.addEventListener('click', exportAll);
+    exportZipBtn.addEventListener('click', exportAsZip);
+    resetBtn.addEventListener('click', resetAll);
+    window.addEventListener('resize', drawPreview);
+
+    fileInput.addEventListener('change', (evt) => {
+      const file = evt.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          image = img;
+          exportAllBtn.disabled = false;
+          exportZipBtn.disabled = false;
+          baseCrop.x = 0;
+          baseCrop.y = 0;
+          baseCrop.width = image.width;
+          baseCrop.height = image.height;
+          syncBaseCropInputs();
+          fillAverage3x3FromBaseCrop();
+          setEditMode('base');
+          renderCards();
+          drawPreview();
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    renderCards();
+    drawPreview();
+  </script>
+</body>
+</html>

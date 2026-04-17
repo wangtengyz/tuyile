@@ -14,6 +14,7 @@
             v-if="!isSpriteImage(currentLevelData.variantImage, currentLevelData.moduleId, currentLevelData.id)" 
             :src="currentLevelData.variantImage" 
             :alt="currentLevelData.variantDescription"
+            :style="getImageStyle(currentLevelData.moduleId, currentLevelData.id)"
             @load="onImageLoad"
             @error="onImageError"
           />
@@ -121,6 +122,7 @@
 import { getLevel, buildLevelKey, getNextLevelKey } from '../data/index.js'
 import { completeLevel, getSingleModuleProgress, checkAndUnlockHonors } from '../services/storageService.js'
 import { HONOR_LEVELS } from '../data/honors.js'
+import { getImageConfig } from '../data/imageConfig.js'
 import LoadingSpinner from './LoadingSpinner.vue'
 
 export default {
@@ -614,12 +616,53 @@ export default {
         this.saveAnswerLimitData()
       }
     },
+    // 获取单独图片的显示样式
+    getImageStyle(moduleId, levelId) {
+      const config = getImageConfig(moduleId, levelId)
+      if (!config || config.isSprite) {
+        return {} // 雪碧图不需要额外样式
+      }
+      
+      // 根据 aspectRatio 计算显示尺寸
+      // aspectRatio 格式: '3:4' 表示宽:高
+      const [widthRatio, heightRatio] = config.aspectRatio.split(':').map(Number)
+      const ratio = widthRatio / heightRatio
+      
+      // 容器尺寸: 280px x 360px
+      const containerWidth = 280
+      const containerHeight = 360
+      const containerRatio = containerWidth / containerHeight
+      
+      let maxWidth, maxHeight
+      
+      if (ratio > containerRatio) {
+        // 图片比容器更宽，以宽度为基准
+        maxWidth = containerWidth - 60 // 留出边距
+        maxHeight = maxWidth / ratio
+      } else {
+        // 图片比容器更高，以高度为基准
+        maxHeight = containerHeight - 80 // 留出边距
+        maxWidth = maxHeight * ratio
+      }
+      
+      return {
+        maxWidth: `${maxWidth}px`,
+        maxHeight: `${maxHeight}px`,
+        objectFit: config.displayMode,
+        objectPosition: 'center'
+      }
+    },
     isSpriteImage(imagePath, moduleId, levelId) {
       // 支持所有雪碧图（儿童启蒙版 + 全民脑洞版 + 热门主题版）
       // 通过 moduleId 和 levelId 判断，不再依赖图片路径
       if (!moduleId || !levelId) return false
       
-      // 所有模块都使用雪碧图
+      // 儿童启蒙版 1-9 关卡使用单独图片，不使用雪碧图
+      if (moduleId === 'children' && levelId >= 1 && levelId <= 9) {
+        return false
+      }
+      
+      // 其他模块和关卡使用雪碧图
       return moduleId === 'children' || moduleId === 'brain' || moduleId === 'theme'
     },
     getSpriteStyle(imagePath, type, levelId, moduleId) {
@@ -811,9 +854,11 @@ export default {
 }
 
 .image img {
-  max-width: 220px;
-  max-height: 280px;
+  /* 默认样式，会被动态样式覆盖 */
+  display: block;
+  margin: auto;
   object-fit: contain;
+  object-position: center;
 }
 
 .sprite-image {
