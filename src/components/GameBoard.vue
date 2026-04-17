@@ -15,8 +15,6 @@
             :src="currentLevelData.variantImage" 
             :alt="currentLevelData.variantDescription"
             :style="getImageStyle(currentLevelData.moduleId, currentLevelData.id)"
-            @load="onImageLoad"
-            @error="onImageError"
           />
           <div 
             v-else 
@@ -352,11 +350,18 @@ export default {
       this.startCountdown()
     },
     startCountdown() {
+      // 先清理旧定时器，防止重复启动
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+      
       this.timer = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--
         } else {
           clearInterval(this.timer)
+          this.timer = null
           if (!this.isAnswered) {
             // 倒计时结束，未答题也算答错
             this.handleTimeout()
