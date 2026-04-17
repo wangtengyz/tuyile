@@ -1,40 +1,23 @@
 <template>
-  <div class="level-select">
-    <div class="top-actions">
-      <div class="test-honor-btn" @click="$emit('test-honor')">
-        测试荣誉弹窗
-      </div>
-      <div class="honor-wall-entry" @click="$emit('open-honor-wall')">
-        🏆 荣誉墙
-      </div>
-    </div>
-    <div class="debug-bar">
-      <label class="debug-switch">
-        <input type="checkbox" :checked="debugMode" @change="$emit('toggle-debug')">
-        <span class="debug-label">调试模式 {{ debugMode ? 'ON' : 'OFF' }}</span>
-      </label>
-      <span v-if="debugMode" class="debug-hint">所有关卡和荣誉已解锁</span>
-    </div>
-    <div class="page-header">
-      <h1>选择你的挑战模式</h1>
-      <p>三种玩法，三种翻车方式。</p>
-    </div>
+  <div class="module-page">
+    <section class="page-header">
+      <h1>模块挑战</h1>
+      <p>选择你要进入的模式，继续你的像素征程。</p>
+    </section>
 
     <div class="module-cards">
-      <!-- 儿童启蒙版 -->
-      <div class="module-card">
-        <div class="module-header">
-          <h2>儿童启蒙版</h2>
-          <p class="module-desc">看着最简单，最容易让大人破防。</p>
+      <article class="module-card">
+        <div class="card-top">
+          <span class="module-icon">🙂</span>
+          <span class="module-badge">Lv 1-3</span>
         </div>
-        <div class="progress-bar">
-          <span class="progress-text">已完成 {{ getCompletedCount('children') }}/54 关</span>
-        </div>
+        <h2>儿童启蒙版</h2>
+        <p class="module-desc">专为小朋友设计的简单像素图，包含水果、小动物和生活用品。</p>
+        <p class="progress-text">已完成 {{ getCompletedCount('children') }}/54 关</p>
         <div class="module-tags">
-          <span class="tag">认图</span>
-          <span class="tag">联想</span>
-          <span class="tag">可爱反转</span>
-          <span class="tag">亲子友好</span>
+          <span class="tag">#简单</span>
+          <span class="tag">#可爱</span>
+          <span class="tag">#学习</span>
         </div>
         <div class="level-grid">
           <button
@@ -42,14 +25,14 @@
             :key="`children-${levelId}`"
             class="level-btn"
             :class="{
-              'completed': isLevelCompleted('children', levelId),
-              'current': levelId === getNextPlayableLevel('children'),
-              'locked': !isLevelUnlocked('children', levelId)
+              completed: isLevelCompleted('children', levelId),
+              current: levelId === getNextPlayableLevel('children'),
+              locked: !isLevelUnlocked('children', levelId)
             }"
             :disabled="!isLevelUnlocked('children', levelId)"
             @click="selectLevel('children', levelId)"
           >
-            <span class="level-number">{{ levelId }}</span>
+            {{ levelId }}
           </button>
         </div>
         <div class="level-grid-actions">
@@ -60,22 +43,20 @@
         <button class="module-btn" @click="selectLevel('children', getNextPlayableLevel('children'))">
           {{ getModuleButtonText('children') }}
         </button>
-      </div>
+      </article>
 
-      <!-- 全民脑洞版 -->
-      <div class="module-card">
-        <div class="module-header">
-          <h2>全民脑洞版</h2>
-          <p class="module-desc">一张图，两层意思，专治"我以为"。</p>
+      <article class="module-card">
+        <div class="card-top">
+          <span class="module-icon">🧠</span>
+          <span class="module-badge danger">Hard</span>
         </div>
-        <div class="progress-bar">
-          <span class="progress-text">已完成 {{ getCompletedCount('brain') }}/54 关</span>
-        </div>
+        <h2>全民脑洞版</h2>
+        <p class="module-desc">抽象像素艺术的极致考验。只有你想不到，没有我们拼不出的脑洞大作。</p>
+        <p class="progress-text">已完成 {{ getCompletedCount('brain') }}/54 关</p>
         <div class="module-tags">
-          <span class="tag">脑筋急转弯</span>
-          <span class="tag">谐音梗</span>
-          <span class="tag">图像反转</span>
-          <span class="tag">高能联想</span>
+          <span class="tag">#烧脑</span>
+          <span class="tag">#抽象</span>
+          <span class="tag">#热门</span>
         </div>
         <div class="level-grid">
           <button
@@ -83,14 +64,14 @@
             :key="`brain-${levelId}`"
             class="level-btn"
             :class="{
-              'completed': isLevelCompleted('brain', levelId),
-              'current': levelId === getNextPlayableLevel('brain'),
-              'locked': !isLevelUnlocked('brain', levelId)
+              completed: isLevelCompleted('brain', levelId),
+              current: levelId === getNextPlayableLevel('brain'),
+              locked: !isLevelUnlocked('brain', levelId)
             }"
             :disabled="!isLevelUnlocked('brain', levelId)"
             @click="selectLevel('brain', levelId)"
           >
-            <span class="level-number">{{ levelId }}</span>
+            {{ levelId }}
           </button>
         </div>
         <div class="level-grid-actions">
@@ -101,22 +82,20 @@
         <button class="module-btn" @click="selectLevel('brain', getNextPlayableLevel('brain'))">
           {{ getModuleButtonText('brain') }}
         </button>
-      </div>
+      </article>
 
-      <!-- 热门主题版 -->
-      <div class="module-card">
-        <div class="module-header">
-          <h2>热门主题版</h2>
-          <p class="module-desc">网感在线的人，通常会笑着翻车。</p>
+      <article class="module-card">
+        <div class="card-top">
+          <span class="module-icon">⭐</span>
+          <span class="module-badge">主题</span>
         </div>
-        <div class="progress-bar">
-          <span class="progress-text">已完成 {{ getCompletedCount('theme') }}/54 关</span>
-        </div>
+        <h2>热门主题版</h2>
+        <p class="module-desc">定期更新的主题活动。电影、名画、地标建筑，在特定领域证明你的实力。</p>
+        <p class="progress-text">已完成 {{ getCompletedCount('theme') }}/54 关</p>
         <div class="module-tags">
-          <span class="tag">热梗</span>
-          <span class="tag">互联网</span>
-          <span class="tag">社交感</span>
-          <span class="tag">评论区体质</span>
+          <span class="tag">#限时</span>
+          <span class="tag">#文化</span>
+          <span class="tag">#收集</span>
         </div>
         <div class="level-grid">
           <button
@@ -124,14 +103,14 @@
             :key="`theme-${levelId}`"
             class="level-btn"
             :class="{
-              'completed': isLevelCompleted('theme', levelId),
-              'current': levelId === getNextPlayableLevel('theme'),
-              'locked': !isLevelUnlocked('theme', levelId)
+              completed: isLevelCompleted('theme', levelId),
+              current: levelId === getNextPlayableLevel('theme'),
+              locked: !isLevelUnlocked('theme', levelId)
             }"
             :disabled="!isLevelUnlocked('theme', levelId)"
             @click="selectLevel('theme', levelId)"
           >
-            <span class="level-number">{{ levelId }}</span>
+            {{ levelId }}
           </button>
         </div>
         <div class="level-grid-actions">
@@ -142,11 +121,7 @@
         <button class="module-btn" @click="selectLevel('theme', getNextPlayableLevel('theme'))">
           {{ getModuleButtonText('theme') }}
         </button>
-      </div>
-    </div>
-
-    <div class="bottom-tip">
-      <p>别急着选最难的，先看看自己到底是哪路选手。</p>
+      </article>
     </div>
   </div>
 </template>
@@ -207,452 +182,225 @@ export default {
       if (completed >= 54) return '已完成'
       return '继续挑战'
     },
-    // 获取要显示的关卡列表（可折叠）
     getVisibleLevels(moduleId) {
       const currentLevel = this.getNextPlayableLevel(moduleId)
       const isExpanded = this.expandedModules[moduleId]
 
       if (isExpanded) {
-        // 展开状态：显示所有54关
         return Array.from({ length: 54 }, (_, i) => i + 1)
       }
 
-      // 折叠状态：只显示当前关卡附近的一行（7个）
-      // 计算当前关卡所在的行（每行7个）
       const currentRow = Math.ceil(currentLevel / 7)
       const startLevel = (currentRow - 1) * 7 + 1
       const endLevel = Math.min(currentRow * 7, 54)
-
       return Array.from({ length: endLevel - startLevel + 1 }, (_, i) => startLevel + i)
     },
-    // 切换展开/折叠
     toggleExpand(moduleId) {
       this.expandedModules[moduleId] = !this.expandedModules[moduleId]
-    },
-    // 获取显示的起始关卡（用于样式定位）
-    getStartLevelForGrid(moduleId) {
-      const visibleLevels = this.getVisibleLevels(moduleId)
-      return visibleLevels[0] || 1
     }
   }
 }
 </script>
 
 <style scoped>
-/* ===== 基础样式 ===== */
-.level-select {
+.module-page {
   width: 100%;
-  padding: 12px;
+  min-height: 100%;
+  padding: 18px 14px 28px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   background: #fff3fd;
-  min-height: 100vh;
 }
 
-/* ===== 页面头部 ===== */
 .page-header {
-  text-align: center;
-  margin-bottom: 8px;
-  padding: 12px;
+  padding: 4px 2px 6px;
 }
 
 .page-header h1 {
-  font-size: 1.6rem;
-  color: #6b0dab;
-  margin-bottom: 8px;
-  font-weight: bold;
-  border-radius: 0;
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: #3b2841;
+  margin-bottom: 6px;
 }
 
 .page-header p {
-  font-size: 0.85rem;
-  color: #6b0dab;
-  opacity: 0.8;
+  font-size: 0.9rem;
+  color: #6a546f;
+  line-height: 1.5;
 }
 
-/* ===== 模块卡片 - 无圆角背景分层 ===== */
 .module-cards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .module-card {
+  border: 2px solid #bfa5c4;
   background: #feebff;
-  border: 2px solid #f5d1fd;
-  border-radius: 0;
-  padding: 12px;
-  position: relative;
+  padding: 14px;
+  box-shadow: 4px 4px 0 #3b2841;
 }
 
-.module-header {
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 8px;
 }
 
-.module-header h2 {
-  font-size: 1.2rem;
-  color: #6b0dab;
+.module-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.module-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #004d57;
+  background: #00e3fd;
+  border: 1px solid #005762;
+  padding: 2px 8px;
+}
+
+.module-badge.danger {
+  color: #520c00;
+  background: #f95630;
+  border-color: #b02500;
+}
+
+.module-card h2 {
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.24rem;
+  color: #3b2841;
   margin-bottom: 6px;
-  font-weight: bold;
-  border-radius: 0;
 }
 
 .module-desc {
-  font-size: 0.8rem;
-  color: #6b0dab;
-  opacity: 0.8;
-  line-height: 1.4;
-}
-
-/* ===== 进度条 ===== */
-.progress-bar {
+  color: #6a546f;
+  font-size: 0.84rem;
+  line-height: 1.55;
   margin-bottom: 10px;
-  padding: 4px 0;
 }
 
 .progress-text {
-  font-size: 0.85rem;
   color: #6b0dab;
-  font-weight: bold;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-/* ===== 标签样式 - 次级按钮紫色主题 ===== */
 .module-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .tag {
-  background: #e7c5ff;
-  color: #6b0dab;
-  border: 2px solid #6b0dab;
-  padding: 4px 8px;
-  border-radius: 0;
-  font-size: 0.7rem;
-  font-weight: bold;
+  border: 1px solid #866f8c;
+  background: #f5d1fd;
+  color: #6a546f;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
 }
 
-/* ===== 关卡网格和按钮 - 像素风格 ===== */
 .level-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  margin-bottom: 8px;
 }
 
 .level-btn {
-  padding: 6px 4px;
-  border: 2px solid #6b0dab;
-  border-radius: 0;
-  background: #f5d1fd;
-  color: #6b0dab;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 0 #6c5a00;
   min-height: 32px;
-  min-width: 32px;
+  border: 1px solid #6b0dab;
+  background: #fff;
+  color: #6b0dab;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #3b2841;
 }
 
-.level-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 0 #6c5a00;
-}
-
-.level-btn:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 1px 0 #6c5a00;
-}
-
-.level-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* 已完成关卡 - 绿色背景 */
 .level-btn.completed {
   background: #06d6a0;
-  color: #fff;
   border-color: #047a5c;
-  box-shadow: 0 2px 0 #047a5c;
+  color: #003e2f;
 }
 
-.level-btn.completed:hover {
-  box-shadow: 0 3px 0 #047a5c;
-}
-
-.level-btn.completed:active {
-  box-shadow: 0 1px 0 #047a5c;
-}
-
-/* 当前关卡 - 黄色高亮 */
 .level-btn.current {
   background: #ffd709;
-  color: #5c3d00;
-  border-color: #8b6914;
-  box-shadow: 0 2px 0 #6c5a00;
+  border-color: #6c5a00;
+  color: #5b4b00;
 }
 
-.level-btn.current:hover {
-  box-shadow: 0 3px 0 #6c5a00;
-}
-
-.level-btn.current:active {
-  box-shadow: 0 1px 0 #6c5a00;
-}
-
-/* 锁定关卡 - 灰色 */
 .level-btn.locked {
-  background: #e0e0e0;
-  color: #999;
-  border-color: #999;
-  box-shadow: 0 2px 0 #666;
+  background: #efe4f2;
+  border-color: #bfa5c4;
+  color: #866f8c;
+  box-shadow: none;
 }
 
-.level-number {
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-.level-check {
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-/* ===== 模块按钮 - 黄色主题 ===== */
-.module-btn {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #8b6914;
-  border-radius: 0;
-  background: linear-gradient(145deg, #ffd709, #ffd166);
-  color: #5c3d00;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 0 #6c5a00;
-  text-align: center;
-  min-height: 44px;
-}
-
-.module-btn:hover {
-  box-shadow: 0 6px 0 #6c5a00;
-  transform: translateY(-2px);
-}
-
-.module-btn:active {
-  box-shadow: 0 2px 0 #6c5a00;
-  transform: translateY(2px);
-}
-
-/* ===== 底部提示 ===== */
-.bottom-tip {
-  text-align: center;
-  margin-top: 8px;
-  padding: 12px;
-}
-
-.bottom-tip p {
-  font-size: 0.8rem;
-  color: #6b0dab;
-  opacity: 0.7;
-}
-
-/* ===== 顶部操作区 ===== */
-.top-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-/* ===== 调试栏 ===== */
-.debug-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: #2a2a2a;
-  border: 2px solid #ff6b6b;
-  margin-bottom: 12px;
-}
-
-.debug-switch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.debug-switch input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: #ff6b6b;
-}
-
-.debug-label {
-  font-size: 0.85rem;
-  font-weight: bold;
-  color: #ff6b6b;
-}
-
-.debug-hint {
-  font-size: 0.75rem;
-  color: #06d6a0;
-  font-weight: bold;
-}
-
-/* ===== 测试荣誉按钮 ===== */
-.test-honor-btn {
-  flex: 1;
-  padding: 8px 16px;
-  border: 2px solid #6b0dab;
-  border-radius: 0;
-  background: #e7c5ff;
-  color: #6b0dab;
-  font-size: 0.8rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0 2px 0 #6b0dab;
-}
-
-.test-honor-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 0 #6b0dab;
-}
-
-.test-honor-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 0 #6b0dab;
-}
-
-/* ===== 荣誉墙入口 ===== */
-.honor-wall-entry {
-  flex: 1;
-  padding: 8px 16px;
-  border: 2px solid #8b6914;
-  border-radius: 0;
-  background: linear-gradient(145deg, #ffd709, #ffd166);
-  color: #5c3d00;
-  font-size: 0.8rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0 2px 0 #6c5a00;
-}
-
-.honor-wall-entry:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 0 #6c5a00;
-}
-
-.honor-wall-entry:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 0 #6c5a00;
-}
-
-/* ===== 关卡网格操作区 ===== */
 .level-grid-actions {
+  margin-top: 10px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: center;
-  margin-top: 8px;
-  margin-bottom: 12px;
 }
 
 .expand-btn {
-  padding: 6px 16px;
-  border: 2px solid #6b0dab;
-  border-radius: 0;
+  border: 1px solid #6b0dab;
   background: #e7c5ff;
   color: #6b0dab;
   font-size: 0.75rem;
-  font-weight: bold;
+  font-weight: 700;
+  padding: 5px 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 0 #6b0dab;
+  box-shadow: 2px 2px 0 #3b2841;
 }
 
-.expand-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 0 #6b0dab;
+.module-btn {
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  width: 100%;
+  min-height: 46px;
+  border: 2px solid #6c5a00;
+  background: #ffd709;
+  color: #5b4b00;
+  font-size: 0.98rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #3b2841;
 }
 
-.expand-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 0 #6b0dab;
+.module-btn:active,
+.expand-btn:active,
+.level-btn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #3b2841;
 }
 
-/* ===== 响应式样式 ===== */
 @media (min-width: 768px) {
-  .level-select {
-    max-width: 700px;
+  .module-page {
+    max-width: 860px;
     margin: 0 auto;
     padding: 24px;
-    gap: 16px;
   }
 
   .page-header h1 {
     font-size: 2rem;
   }
 
-  .page-header p {
-    font-size: 1rem;
+  .module-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
   }
 
-  .module-card {
-    padding: 20px;
-  }
-
-  .module-header h2 {
-    font-size: 1.4rem;
-  }
-
-  .module-desc {
-    font-size: 0.9rem;
-  }
-
-  .progress-text {
-    font-size: 1rem;
-  }
-
-  .tag {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-  }
-
-  .level-grid {
-    gap: 8px;
-  }
-
-  .level-btn {
-    min-height: 40px;
-    font-size: 0.85rem;
-    padding: 8px 6px;
-  }
-
-  .level-number {
-    font-size: 0.85rem;
-  }
-
-  .level-check {
-    font-size: 1.1rem;
-  }
-
-  .module-btn {
-    padding: 16px;
-    font-size: 1.1rem;
-    min-height: 52px;
+  .module-cards .module-card:last-child {
+    grid-column: span 2;
   }
 }
 </style>

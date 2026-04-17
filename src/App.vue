@@ -1,35 +1,77 @@
 <template>
-  <div class="app">
-    <header class="app-header" v-if="currentView !== 'game'">
+  <div class="app" @click="closeDebugMenu">
+    <header class="app-header" v-if="showHeader">
+      <div class="header-main">
+        <div class="brand-area">
+          <button
+            v-if="showBackButton"
+            class="icon-btn"
+            @click.stop="goBackFromHeader"
+            aria-label="返回首页"
+          >
+            ←
+          </button>
+          <div class="brand-text">
+            <h1>图一乐 <span>TYL</span></h1>
+            <p>{{ currentSubtitle }}</p>
+          </div>
+        </div>
+
+        <div class="header-tools">
+          <div class="user-pill" v-if="username">
+            <span class="user-name">{{ username }}</span>
+            <span class="user-score">答对 {{ totalCorrectAnswers }}</span>
+          </div>
+          <div class="debug-entry" @click.stop>
+            <button class="icon-btn" @click="toggleDebugMenu" aria-label="打开调试菜单">
+              ⚙
+            </button>
+            <div class="debug-menu" v-if="showDebugMenu">
+              <button @click="toggleDebugMode">{{ debugMode ? '关闭' : '开启' }}调试模式</button>
+              <button @click="showTestHonorModalAndClose">测试荣誉弹窗</button>
+              <button @click="openSettings">切换用户名</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="resurrection-countdown" v-if="isInResurrectionPeriod">
         距离可答题：{{ formatTime(resurrectionTimeLeft) }}
       </div>
-      <div class="header-content">
-        <h1>图一乐</h1>
-        <p>一眼会认，二眼烧脑</p>
-      </div>
-      <div class="header-actions" v-if="username">
-        <div class="user-info">
-          <span class="username">{{ username }}</span>
-          <span class="correct-count">答对: {{ totalCorrectAnswers }}</span>
-        </div>
-        <button class="settings-btn" @click="openSettings">设置</button>
-      </div>
-      <div class="header-actions" v-else>
-        <button class="settings-btn" @click="openSettings">设置</button>
-      </div>
     </header>
-    
+
     <main class="app-main">
-      <UserConfig v-if="currentView === 'userConfig'" @start-game="startGame" @config-saved="configSaved" />
-      <LevelSelect v-if="currentView === 'levelSelect'"
+      <UserConfig
+        v-if="currentView === 'userConfig'"
+        @start-game="startGame"
+        @config-saved="configSaved"
+      />
+
+      <HomePage
+        v-else-if="currentView === 'home'"
+        :username="username"
+        :total-correct-answers="totalCorrectAnswers"
+        @start-challenge="startChallenge"
+        @open-module-challenge="goToModuleChallenge"
+        @open-honor-wall="goToHonorWall"
+      />
+
+      <LevelSelect
+        v-else-if="currentView === 'moduleChallenge'"
         :module-progress="moduleProgress"
         :debug-mode="debugMode"
         @start-game="startGame"
-        @test-honor="showTestHonorModal"
-        @open-honor-wall="currentView = 'honorWall'"
-        @toggle-debug="toggleDebugMode" />
-      <GameBoard v-else-if="currentView === 'game'"
+      />
+
+      <HonorWall
+        v-else-if="currentView === 'honorWall'"
+        :unlocked-honors="unlockedHonors"
+        :debug-mode="debugMode"
+        @back="goHome"
+      />
+
+      <GameBoard
+        v-else-if="currentView === 'game'"
         :level-data="currentLevelData"
         :username="username"
         @game-over="gameOver"
@@ -38,10 +80,21 @@
         @game-reset="resetGame"
         @show-resurrection="showResurrectionModal"
         @honor-unlocked="showHonorModal"
-        @module-complete="showModuleCompleteModal" />
+        @module-complete="showModuleCompleteModal"
+      />
+
       <ResultModal v-if="showResult" :result="gameResult" @close="closeResult" />
-      <ShareModal v-if="showShare" :module-name="shareModalData.moduleName" :correct-answers="shareModalData.correctAnswers" @close="closeShare" />
-      <ResurrectionModal v-if="showResurrection" :remainingTime="resurrectionTimeLeft" @close="closeResurrection" />
+      <ShareModal
+        v-if="showShare"
+        :module-name="shareModalData.moduleName"
+        :correct-answers="shareModalData.correctAnswers"
+        @close="closeShare"
+      />
+      <ResurrectionModal
+        v-if="showResurrection"
+        :remainingTime="resurrectionTimeLeft"
+        @close="closeResurrection"
+      />
       <HonorDetailModal
         v-if="showHonorDetail"
         :honor="currentHonorData"
@@ -54,23 +107,14 @@
         @close="closeModuleCompleteModal"
         @go-honor="goToHonorWallFromComplete"
       />
-      <HonorWall
-        v-else-if="currentView === 'honorWall'"
-        :unlocked-honors="unlockedHonors"
-        :debug-mode="debugMode"
-        @back="backToMenu"
-      />
     </main>
-    
-    <footer class="app-footer">
-      <p>©2026 宸汐宝的猜图乐园</p>
-    </footer>
   </div>
 </template>
 
 <script>
 import { defineAsyncComponent } from 'vue'
 import UserConfig from './components/UserConfig.vue'
+import HomePage from './components/HomePage.vue'
 import LevelSelect from './components/LevelSelect.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
 import HonorWall from './components/HonorWall.vue'
@@ -82,7 +126,7 @@ import {
   getModuleProgress, completeLevel,
   setResurrectionTime, getResurrectionTime, clearResurrectionTime,
   getDefaultModuleProgress,
-  getUnlockedHonors, getDefaultUnlockedHonors
+  getUnlockedHonors
 } from './services/storageService.js'
 
 const GameBoard = defineAsyncComponent({
@@ -94,20 +138,20 @@ const GameBoard = defineAsyncComponent({
 const ResultModal = defineAsyncComponent(() => import('./components/ResultModal.vue'))
 const ShareModal = defineAsyncComponent(() => import('./components/ShareModal.vue'))
 const ResurrectionModal = defineAsyncComponent(() => import('./components/ResurrectionModal.vue'))
-
 const ModuleCompleteModal = defineAsyncComponent(() => import('./components/ModuleCompleteModal.vue'))
 
 export default {
   name: 'App',
   components: {
+    UserConfig,
+    HomePage,
     LevelSelect,
+    HonorWall,
+    HonorDetailModal,
     GameBoard,
     ResultModal,
     ShareModal,
-    UserConfig,
     ResurrectionModal,
-    HonorWall,
-    HonorDetailModal,
     ModuleCompleteModal
   },
   data() {
@@ -140,6 +184,7 @@ export default {
       currentHonorData: null,
       honorUnlockCallback: null,
       debugMode: false,
+      showDebugMenu: false,
       showModuleComplete: false,
       moduleCompleteData: {
         moduleId: '',
@@ -157,6 +202,17 @@ export default {
         }
       }
       return total
+    },
+    showHeader() {
+      return this.currentView !== 'game' && this.currentView !== 'userConfig'
+    },
+    showBackButton() {
+      return this.currentView === 'moduleChallenge' || this.currentView === 'honorWall'
+    },
+    currentSubtitle() {
+      if (this.currentView === 'moduleChallenge') return '挑战模式选择'
+      if (this.currentView === 'honorWall') return '荣誉墙'
+      return '一眼会认，二眼烧脑'
     }
   },
   async mounted() {
@@ -167,7 +223,7 @@ export default {
         await migrateOldData(this.username)
         this.moduleProgress = await getModuleProgress(this.username)
         this.unlockedHonors = await getUnlockedHonors(this.username)
-        this.currentView = 'levelSelect'
+        this.currentView = 'home'
         await this.checkResurrectionStatus()
       }
     } catch (error) {
@@ -175,14 +231,45 @@ export default {
     }
   },
   methods: {
+    startChallenge() {
+      this.currentView = 'moduleChallenge'
+      this.closeDebugMenu()
+    },
+    goHome() {
+      this.currentView = 'home'
+      this.closeDebugMenu()
+      this.refreshModuleProgress()
+    },
+    goToModuleChallenge() {
+      this.currentView = 'moduleChallenge'
+      this.closeDebugMenu()
+      this.refreshModuleProgress()
+    },
+    goToHonorWall() {
+      this.currentView = 'honorWall'
+      this.closeDebugMenu()
+      this.refreshUnlockedHonors()
+    },
+    goBackFromHeader() {
+      if (this.currentView === 'moduleChallenge' || this.currentView === 'honorWall') {
+        this.goHome()
+      }
+    },
+    toggleDebugMenu() {
+      this.showDebugMenu = !this.showDebugMenu
+    },
+    closeDebugMenu() {
+      this.showDebugMenu = false
+    },
     startGame(levelData) {
       this.currentLevelData = levelData
       this.currentView = 'game'
+      this.closeDebugMenu()
     },
     backToMenu() {
-      this.currentView = 'levelSelect'
-      // 刷新模块进度
+      this.currentView = 'moduleChallenge'
       this.refreshModuleProgress()
+      this.closeDebugMenu()
     },
     async refreshModuleProgress() {
       if (this.username) {
@@ -212,7 +299,8 @@ export default {
     },
     closeShare() {
       this.showShare = false
-      this.currentView = 'levelSelect'
+      this.currentView = 'moduleChallenge'
+      this.closeDebugMenu()
     },
     async configSaved(username) {
       try {
@@ -222,14 +310,15 @@ export default {
         await migrateOldData(username)
         this.moduleProgress = await getModuleProgress(username)
         this.unlockedHonors = await getUnlockedHonors(username)
-        this.currentView = 'levelSelect'
+        this.currentView = 'home'
         await this.checkResurrectionStatus()
       } catch (error) {
         console.error('保存配置失败:', error)
       }
     },
     resetGame() {
-      this.currentView = 'levelSelect'
+      this.currentView = 'moduleChallenge'
+      this.closeDebugMenu()
     },
     async showResurrectionModal(data) {
       try {
@@ -256,10 +345,12 @@ export default {
       this.shareModalData = { moduleName: 'children', correctAnswers: 10 }
       this.showShare = true
     },
-    // 显示荣誉弹窗
+    showTestHonorModalAndClose() {
+      this.showTestHonorModal()
+      this.closeDebugMenu()
+    },
     showHonorModal(data) {
       const { moduleId, completedCount, newlyUnlocked } = data
-      // 获取最新解锁的荣誉等级（取最大的）
       const latestLevel = Math.max(...newlyUnlocked)
       const moduleConfig = HONOR_CONFIG[moduleId]
       const honorConfig = moduleConfig.honors.find(h => h.level === latestLevel)
@@ -270,26 +361,21 @@ export default {
         completedCount
       }
       this.showHonorDetail = true
-      // 保存回调，关闭弹窗后进入下一题
       this.honorUnlockCallback = () => {
         this.startGame(this.currentLevelData)
       }
     },
-    // 关闭荣誉弹窗
     closeHonorModal() {
       this.showHonorDetail = false
       this.currentHonorData = null
-      // 关闭后进入下一题
       if (this.honorUnlockCallback) {
         this.honorUnlockCallback()
         this.honorUnlockCallback = null
       }
     },
-    // 荣誉弹窗点击下一题
     goToNextLevel() {
       this.showHonorDetail = false
       this.currentHonorData = null
-      // 找到下一关
       const nextLevelId = this.currentLevelData.levelId + 1
       if (nextLevelId <= 54) {
         this.startGame({
@@ -297,11 +383,9 @@ export default {
           levelId: nextLevelId
         })
       } else {
-        // 模块完成，返回菜单
         this.backToMenu()
       }
     },
-    // 显示模块完成弹窗
     showModuleCompleteModal(data) {
       const moduleNames = {
         children: '儿童启蒙版',
@@ -314,21 +398,19 @@ export default {
       }
       this.showModuleComplete = true
     },
-    // 关闭模块完成弹窗
     closeModuleCompleteModal() {
       this.showModuleComplete = false
       this.backToMenu()
     },
-    // 从模块完成弹窗跳转到荣誉墙
     goToHonorWallFromComplete() {
       this.showModuleComplete = false
       this.currentView = 'honorWall'
+      this.closeDebugMenu()
     },
     closeResurrection() {
       this.showResurrection = false
     },
     startResurrectionTimer() {
-      // Clear any existing timer
       if (this.resurrectionTimer) {
         clearInterval(this.resurrectionTimer)
       }
@@ -343,13 +425,11 @@ export default {
       }, 1000)
     },
     async onResurrectionTimerEnd() {
-      // 倒计时结束时自动继续游戏
       try {
         await clearResurrectionTime(this.username)
         this.isInResurrectionPeriod = false
         this.showResurrection = false
         this.resurrectionTimeLeft = 0
-        // 自动进入当前关卡继续答题
         this.startGame(this.currentLevelData)
       } catch (error) {
         console.error('复活结束处理失败:', error)
@@ -357,6 +437,7 @@ export default {
     },
     openSettings() {
       this.currentView = 'userConfig'
+      this.closeDebugMenu()
     },
     formatTime(seconds) {
       const minutes = Math.floor(seconds / 60)
@@ -380,7 +461,6 @@ export default {
     },
     toggleDebugMode() {
       this.debugMode = !this.debugMode
-      console.log('调试模式:', this.debugMode ? '开启' : '关闭')
     }
   },
   beforeUnmount() {
@@ -393,252 +473,175 @@ export default {
 </script>
 
 <style>
-/* 全局样式 - 像素风格 */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #fff3fd;
-  font-family: 'Arial', sans-serif;
-  position: relative;
-  overflow-x: hidden;
-  /* 游戏页面时防止键盘唤起滚动 */
-  overflow-y: auto;
+body {
+  font-family: 'Plus Jakarta Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
-/* 头部样式 - 像素风格 */
+.app {
+  min-height: 100vh;
+  background: #fff3fd;
+  color: #3b2841;
+}
+
 .app-header {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #f4a261 0%, #e76f51 50%, #2a9d8f 100%);
-  color: white;
-  box-shadow: 0 4px 0 #264653;
-  position: relative;
-  border-bottom: 4px solid #264653;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 12px 12px 10px;
+  background: #fff3fd;
+  border-bottom: 2px solid #bfa5c4;
+  box-shadow: 0 3px 0 rgba(59, 40, 65, 0.12);
+}
+
+.header-main {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.brand-area {
+  display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+
+.brand-text h1 {
+  font-size: 1.2rem;
+  line-height: 1.1;
+  color: #3b2841;
+  white-space: nowrap;
+}
+
+.brand-text h1 span {
+  font-size: 0.88rem;
+  color: #6c5a00;
+  margin-left: 2px;
+}
+
+.brand-text p {
+  font-size: 0.72rem;
+  color: #6a546f;
+  margin-top: 2px;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-pill {
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.7rem;
+  border: 1px solid #866f8c;
+  background: #f5d1fd;
+  padding: 4px 8px;
+}
+
+.user-name {
+  color: #3b2841;
+  font-weight: 700;
+}
+
+.user-score {
+  color: #6c5a00;
+  font-weight: 700;
+}
+
+.icon-btn {
+  min-width: 36px;
+  min-height: 36px;
+  border: 2px solid #6c5a00;
+  background: #ffd709;
+  color: #5b4b00;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #3b2841;
+}
+
+.icon-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #3b2841;
+}
+
+.debug-entry {
+  position: relative;
+}
+
+.debug-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 176px;
+  border: 2px solid #866f8c;
+  background: #fff;
+  box-shadow: 4px 4px 0 #3b2841;
+  overflow: hidden;
+}
+
+.debug-menu button {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #e0c6e5;
+  background: #fff;
+  color: #3b2841;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.debug-menu button:last-child {
+  border-bottom: none;
+}
+
+.debug-menu button:hover {
+  background: #feebff;
 }
 
 .resurrection-countdown {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #ffd166;
-  background: rgba(0, 0, 0, 0.2);
+  margin-top: 8px;
+  border: 1px solid #b02500;
+  background: #ffefec;
+  color: #b02500;
+  font-size: 0.76rem;
+  font-weight: 700;
   padding: 4px 8px;
-  border-radius: 0;
-  border: 2px solid #ffd166;
-  animation: pulse 1s infinite;
 }
 
-.header-content {
-  text-align: center;
-  width: 100%;
-  margin-top: 4px;
-}
-
-.header-content h1 {
-  font-size: 1.4rem;
-  margin-bottom: 4px;
-  font-weight: bold;
-  text-shadow: 2px 2px 0 #264653, -1px -1px 0 #264653;
-  letter-spacing: 1px;
-  color: #ffffff;
-}
-
-.header-content p {
-  font-size: 0.8rem;
-  opacity: 0.95;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-  max-width: 90%;
-  margin: 0 auto;
-  color: #ffffff;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: 4px;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-}
-
-.username {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #ffd166;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 4px 8px;
-  border-radius: 0;
-  border: 2px solid #ffd166;
-  text-align: center;
-}
-
-.correct-count {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #06d6a0;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 4px 8px;
-  border-radius: 0;
-  border: 2px solid #06d6a0;
-  text-align: center;
-}
-
-.settings-btn {
-  padding: 8px 16px;
-  border: 2px solid #8b6914;
-  border-radius: 0;
-  background: linear-gradient(145deg, #ffd709, #ffd166);
-  color: #5c3d00;
-  font-size: 0.85rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 0 #6c5a00;
-  font-family: 'Arial', sans-serif;
-  min-width: 80px;
-  min-height: 44px;
-  z-index: 100;
-  position: relative;
-}
-
-.settings-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 #6c5a00;
-}
-
-.settings-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #6c5a00;
-}
-
-/* 主内容区样式 - 像素风格 */
 .app-main {
-  flex: 1;
   width: 100%;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 5;
-  gap: 8px;
 }
 
-/* 底部样式 - 像素风格 */
-.app-footer {
-  width: 100%;
-  padding: 12px;
-  text-align: center;
-  background: #264653;
-  color: white;
-  font-size: 0.75rem;
-  margin-top: auto;
-  border-top: 4px solid #f4a261;
-  position: relative;
-  z-index: 10;
-}
-
-/* 动画效果 */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* 响应式设计 - 像素风格 */
 @media (min-width: 768px) {
   .app-header {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 16px;
-    gap: 12px;
+    padding: 14px 20px 12px;
   }
 
-  .resurrection-countdown {
-    top: 12px;
-    left: 16px;
+  .brand-text h1 {
+    font-size: 1.34rem;
+  }
+
+  .brand-text p {
     font-size: 0.8rem;
-    padding: 6px 12px;
   }
 
-  .header-content {
-    flex: 2;
-    margin-top: 0;
-  }
-
-  .header-content h1 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
-  }
-
-  .header-content p {
-    font-size: 0.9rem;
-  }
-
-  .header-actions {
-    flex: 1;
-    justify-content: flex-end;
-    margin-top: 0;
-    gap: 12px;
-  }
-
-  .user-info {
-    flex-direction: row;
-    gap: 8px;
-  }
-
-  .username,
-  .correct-count {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-
-  .settings-btn {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    min-width: 100px;
-  }
-
-  .app-main {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px 16px;
-  }
-
-  .app-footer {
-    padding: 16px;
-    font-size: 0.85rem;
+  .user-pill {
+    display: flex;
   }
 }
 </style>
