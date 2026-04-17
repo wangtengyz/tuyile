@@ -15,31 +15,31 @@ export const HONOR_CONFIG = {
     honors: [
       {
         level: 10,
-        image: 'https://telegraph-image-92x.pages.dev/file/ac6eb101028dc867246f5-c5c30add2435aa5373.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8010%E8%8D%A3%E8%AA%89.png',
         title: '启蒙新手',
         description: '答对10题解锁'
       },
       {
         level: 20,
-        image: 'https://telegraph-image-92x.pages.dev/file/5b1b09e722d98ac541b8c-12f361d6f76d6e3922.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8020%E8%8D%A3%E8%AA%89.png',
         title: '认图达人',
         description: '答对20题解锁'
       },
       {
         level: 30,
-        image: 'https://telegraph-image-92x.pages.dev/file/cfad2f3d99381fa921fd4-782963c7599ee7d59a.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8030%E8%8D%A3%E8%AA%89.png',
         title: '小小智者',
         description: '答对30题解锁'
       },
       {
         level: 40,
-        image: 'https://telegraph-image-92x.pages.dev/file/c91e367e397544ad73b5a-a324b34cd2deac95f0.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8040%E8%8D%A3%E8%AA%89.png',
         title: '脑洞萌芽',
         description: '答对40题解锁'
       },
       {
         level: 50,
-        image: 'https://telegraph-image-92x.pages.dev/file/7c81d97d2f02604dc5fde-41ac6d9eb7dacb33a8.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8050%E8%8D%A3%E8%AA%89.png',
         title: '启蒙大师',
         description: '答对50题解锁'
       }
@@ -51,31 +51,31 @@ export const HONOR_CONFIG = {
     honors: [
       {
         level: 10,
-        image: 'https://telegraph-image-92x.pages.dev/file/29656c8452d1caaabd762-b58ceedce952f99d02.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%BA%8C10%E8%8D%A3%E8%AA%89.png',
         title: '脑洞开启',
         description: '答对10题解锁'
       },
       {
         level: 20,
-        image: 'https://telegraph-image-92x.pages.dev/file/afbefe9c058b114f2ddbd-e05232efa4ae74cf01.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%BA%8C20%E8%8D%A3%E8%AA%89.png',
         title: '思维活跃',
         description: '答对20题解锁'
       },
       {
         level: 30,
-        image: 'https://telegraph-image-92x.pages.dev/file/e261c3607c57bd23f6ebb-0591a8a8b95f5da55a.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%BA%8C30%E8%8D%A3%E8%AA%89.png',
         title: '联想高手',
         description: '答对30题解锁'
       },
       {
         level: 40,
-        image: 'https://telegraph-image-92x.pages.dev/file/1851515266d604ab6ab25-4b395ef9b7fc8f1c6e.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%BA%8C40%E8%8D%A3%E8%AA%89.png',
         title: '创意达人',
         description: '答对40题解锁'
       },
       {
         level: 50,
-        image: 'https://telegraph-image-92x.pages.dev/file/b79d55231227c8627ef06-c60fa3fbe9d7c50b72.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%BA%8C50%E8%8D%A3%E8%AA%89.png',
         title: '脑洞王者',
         description: '答对50题解锁'
       }
@@ -87,31 +87,31 @@ export const HONOR_CONFIG = {
     honors: [
       {
         level: 10,
-        image: 'https://telegraph-image-92x.pages.dev/file/e3a8cf612e1c7d335258d-b526ea55392b1662a0.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8910%E8%8D%A3%E8%AA%89.png',
         title: '主题新手',
         description: '答对10题解锁'
       },
       {
         level: 20,
-        image: 'https://telegraph-image-92x.pages.dev/file/f8974b3e34ca252510cb4-11002d40d481a1bfd9.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8920%E8%8D%A3%E8%AA%89.png',
         title: '流行追踪',
         description: '答对20题解锁'
       },
       {
         level: 30,
-        image: 'https://telegraph-image-92x.pages.dev/file/ac2f8768e6755a4dd40a9-c09e5f6f307c18864d.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8930%E8%8D%A3%E8%AA%89.png',
         title: '话题达人',
         description: '答对30题解锁'
       },
       {
         level: 40,
-        image: 'https://telegraph-image-92x.pages.dev/file/15a8d631afb8a2d1f15b4-9ec66cb7f123b56843.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8940%E8%8D%A3%E8%AA%89.png',
         title: '潮流先锋',
         description: '答对40题解锁'
       },
       {
         level: 50,
-        image: 'https://telegraph-image-92x.pages.dev/file/09e94a2c7e976bf024c5d-1a10d82e4dd2d97a97.png',
+        image: 'https://raycloud-resources-zb.oss-cn-zhangjiakou.aliyuncs.com/2023/ts/%E6%A8%A1%E5%9D%97%E4%B8%8950%E8%8D%A3%E8%AA%89.png',
         title: '主题大师',
         description: '答对50题解锁'
       }

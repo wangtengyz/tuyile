@@ -408,6 +408,8 @@ export default {
   font-family: 'Arial', sans-serif;
   position: relative;
   overflow-x: hidden;
+  /* 游戏页面时防止键盘唤起滚动 */
+  overflow-y: auto;
 }
 
 /* 头部样式 - 像素风格 */

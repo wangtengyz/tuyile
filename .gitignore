@@ -5,6 +5,7 @@
 /src/print/node_modules
 /large-screen/node_modules
 /*/node_modules
+/dist
 
 # Production
 /publish

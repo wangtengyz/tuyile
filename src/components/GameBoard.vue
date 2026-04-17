@@ -290,11 +290,7 @@ export default {
       // 预加载图片
       this.preloadImage()
 
-      this.$nextTick(() => {
-        if (this.$refs.answerInputs && this.$refs.answerInputs[0]) {
-          this.$refs.answerInputs[0].focus()
-        }
-      })
+      // 注意：输入框聚焦已移到图片加载完成后，防止键盘唤起时页面滚动
     },
     // 预加载图片
     preloadImage() {
@@ -339,6 +335,13 @@ export default {
       this.imageLoading = false
       // 图片加载完成后启动倒计时
       this.startCountdown()
+      // 图片加载完成后聚焦输入框，使用 preventScroll 防止页面滚动
+      this.$nextTick(() => {
+        if (this.$refs.answerInputs && this.$refs.answerInputs[0]) {
+          // 使用 preventScroll 选项防止键盘唤起时页面滚动
+          this.$refs.answerInputs[0].focus({ preventScroll: true })
+        }
+      })
     },
     // 图片加载失败
     onImageError() {
@@ -355,10 +358,27 @@ export default {
         } else {
           clearInterval(this.timer)
           if (!this.isAnswered) {
-            this.checkAnswer()
+            // 倒计时结束，未答题也算答错
+            this.handleTimeout()
           }
         }
       }, 1000)
+    },
+    // 倒计时结束处理
+    async handleTimeout() {
+      this.isCorrect = false
+      this.isAnswered = true
+      this.consecutiveCorrect = 0
+      this.attempts--
+
+      if (this.attempts <= 0) {
+        // 显示复活弹窗
+        const progress = await getSingleModuleProgress(this.username, this.levelData.moduleId)
+        this.$emit('show-resurrection', {
+          moduleName: this.levelData.moduleId,
+          correctAnswers: progress.completedLevels.length
+        })
+      }
     },
     onKeydown(index, event) {
       const inputs = this.$refs.answerInputs;
@@ -653,17 +673,8 @@ export default {
       }
     },
     isSpriteImage(imagePath, moduleId, levelId) {
-      // 支持所有雪碧图（儿童启蒙版 + 全民脑洞版 + 热门主题版）
-      // 通过 moduleId 和 levelId 判断，不再依赖图片路径
-      if (!moduleId || !levelId) return false
-      
-      // 儿童启蒙版 1-9 关卡使用单独图片，不使用雪碧图
-      if (moduleId === 'children' && levelId >= 1 && levelId <= 9) {
-        return false
-      }
-      
-      // 其他模块和关卡使用雪碧图
-      return moduleId === 'children' || moduleId === 'brain' || moduleId === 'theme'
+      // 所有模块现在都使用单独图片，不再使用雪碧图
+      return false
     },
     getSpriteStyle(imagePath, type, levelId, moduleId) {
       // 雪碧图是 3x3 网格
@@ -806,6 +817,9 @@ export default {
   flex-direction: column;
   gap: 20px;
   background: #fff3fd;
+  /* 防止键盘唤起时页面滚动 */
+  position: relative;
+  overflow: hidden;
 }
 
 

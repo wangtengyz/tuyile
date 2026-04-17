@@ -1,20 +1,20 @@
 <template>
   <div class="level-select">
     <div class="top-actions">
-      <!-- <div class="test-honor-btn" @click="$emit('test-honor')">
+      <div class="test-honor-btn" @click="$emit('test-honor')">
         测试荣誉弹窗
-      </div> -->
+      </div>
       <div class="honor-wall-entry" @click="$emit('open-honor-wall')">
         🏆 荣誉墙
       </div>
     </div>
-    <!-- <div class="debug-bar">
+    <div class="debug-bar">
       <label class="debug-switch">
         <input type="checkbox" :checked="debugMode" @change="$emit('toggle-debug')">
         <span class="debug-label">调试模式 {{ debugMode ? 'ON' : 'OFF' }}</span>
       </label>
       <span v-if="debugMode" class="debug-hint">所有关卡和荣誉已解锁</span>
-    </div> -->
+    </div>
     <div class="page-header">
       <h1>选择你的挑战模式</h1>
       <p>三种玩法，三种翻车方式。</p>
