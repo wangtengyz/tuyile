@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>图片拼接工具</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: 100vh;
+    }
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid #e5e7eb;
+      padding: 16px;
+      overflow: auto;
+    }
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      flex-wrap: wrap;
+    }
+    .canvas-wrap {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+      background:
+        linear-gradient(45deg, #eef2f7 25%, transparent 25%),
+        linear-gradient(-45deg, #eef2f7 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #eef2f7 75%),
+        linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .canvas {
+      position: relative;
+      width: 2000px;
+      height: 1200px;
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      transform-origin: top left;
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0 0 12px;
+    }
+    h2 {
+      font-size: 14px;
+      margin: 16px 0 10px;
+      color: #374151;
+    }
+    .muted {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+    .btn, .input, .select {
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      padding: 0 12px;
+      font-size: 14px;
+    }
+    .btn {
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .btn:hover { background: #f9fafb; }
+    .btn.primary {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+    .btn.primary:hover { opacity: .92; }
+    .btn.danger {
+      color: #b91c1c;
+      border-color: #fecaca;
+      background: #fff5f5;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: #4b5563;
+      margin-bottom: 6px;
+    }
+    .field input[type="number"], .field input[type="text"] {
+      width: 100%;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 0 10px;
+      background: #fff;
+    }
+    .thumb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .thumb-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .thumb-item.active {
+      border-color: #111827;
+      box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.06);
+    }
+    .thumb-item img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+    .thumb-meta {
+      min-width: 0;
+      font-size: 12px;
+      color: #4b5563;
+    }
+    .thumb-meta .name {
+      font-size: 13px;
+      color: #111827;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+    }
+    .item {
+      position: absolute;
+      user-select: none;
+      border: 2px solid transparent;
+      cursor: move;
+    }
+    .item.active {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+    .item img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+    .resize-handle {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      right: -7px;
+      bottom: -7px;
+      background: #2563eb;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: nwse-resize;
+    }
+    .empty {
+      color: #6b7280;
+      font-size: 14px;
+      padding: 20px 0;
+      line-height: 1.7;
+    }
+    .spacer { flex: 1; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+      font-size: 12px;
+    }
+    .dropzone {
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      background: #f8fafc;
+      transition: .2s ease;
+    }
+    .dropzone.dragover {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>图片拼接工具</h1>
+      <div class="muted">支持任意张图片上传，自由拖拽排序与摆放，最后导出为一张大图。</div>
+
+      <h2>上传图片</h2>
+      <div id="dropzone" class="dropzone">
+        <div class="muted" style="margin-bottom:10px;">拖拽图片到这里，或点击选择文件</div>
+        <input id="fileInput" type="file" accept="image/*" multiple />
+      </div>
+
+      <h2>画布设置</h2>
+      <div class="row">
+        <div class="field" style="flex:1;min-width:120px;">
+          <label>画布宽度</label>
+          <input id="canvasWidth" type="number" value="2000" min="100" />
+        </div>
+        <div class="field" style="flex:1;min-width:120px;">
+          <label>画布高度</label>
+          <input id="canvasHeight" type="number" value="1200" min="100" />
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" id="applyCanvasSize">应用画布大小</button>
+        <button class="btn" id="autoFitBtn">按内容包围导出</button>
+      </div>
+
+      <h2>当前选中图片</h2>
+      <div id="selectionPanel" class="empty">还没有选中图片</div>
+
+      <h2>图片列表 <span class="pill" id="countBadge">0</span></h2>
+      <div id="thumbList" class="thumb-list">
+        <div class="empty">上传图片后会显示在这里</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <button class="btn" id="zoomOut">缩小</button>
+        <span class="pill" id="zoomLabel">100%</span>
+        <button class="btn" id="zoomIn">放大</button>
+        <button class="btn" id="resetZoom">重置缩放</button>
+        <div class="spacer"></div>
+        <button class="btn" id="alignLeft">左对齐</button>
+        <button class="btn" id="alignTop">上对齐</button>
+        <button class="btn" id="bringFront">置顶</button>
+        <button class="btn" id="sendBack">置底</button>
+        <button class="btn danger" id="deleteSelected">删除选中</button>
+        <button class="btn primary" id="exportBtn">导出拼接图</button>
+      </div>
+      <div class="canvas-wrap">
+        <div id="canvas" class="canvas"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropzone = document.getElementById('dropzone');
+    const canvas = document.getElementById('canvas');
+    const thumbList = document.getElementById('thumbList');
+    const selectionPanel = document.getElementById('selectionPanel');
+    const countBadge = document.getElementById('countBadge');
+    const canvasWidthInput = document.getElementById('canvasWidth');
+    const canvasHeightInput = document.getElementById('canvasHeight');
+    const zoomLabel = document.getElementById('zoomLabel');
+
+    let items = [];
+    let selectedId = null;
+    let idSeed = 1;
+    let zoom = 1;
+    let zSeed = 1;
+    let exportAutoFit = false;
+
+    function formatSize(n) {
+      return `${Math.round(n)} px`;
+    }
+
+    function updateCanvasSize() {
+      const w = Math.max(100, Number(canvasWidthInput.value) || 2000);
+      const h = Math.max(100, Number(canvasHeightInput.value) || 1200);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+    }
+
+    function setZoom(nextZoom) {
+      zoom = Math.min(3, Math.max(0.2, nextZoom));
+      canvas.style.transform = `scale(${zoom})`;
+      zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+    }
+
+    function getSelectedItem() {
+      return items.find(item => item.id === selectedId) || null;
+    }
+
+    function refreshSelectionPanel() {
+      const item = getSelectedItem();
+      if (!item) {
+        selectionPanel.innerHTML = '<div class="empty">还没有选中图片</div>';
+        return;
+      }
+      selectionPanel.innerHTML = `
+        <div class="stack">
+          <div class="field">
+            <label>文件名</label>
+            <input id="selName" type="text" value="${escapeHtml(item.name)}" />
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1;min-width:90px;">
+              <label>X</label>
+              <input id="selX" type="number" value="${Math.round(item.x)}" />
+            </div>
+            <div class="field" style="flex:1;min-width:90px;">
+              <label>Y</label>
+              <input id="selY" type="number" value="${Math.round(item.y)}" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1;min-width:90px;">
+              <label>宽度</label>
+              <input id="selW" type="number" value="${Math.round(item.width)}" min="10" />
+            </div>
+            <div class="field" style="flex:1;min-width:90px;">
+              <label>高度</label>
+              <input id="selH" type="number" value="${Math.round(item.height)}" min="10" />
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn" id="applySelected">应用修改</button>
+            <button class="btn" id="keepRatio">等比缩放</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('applySelected').onclick = () => {
+        item.name = document.getElementById('selName').value.trim() || item.name;
+        item.x = Number(document.getElementById('selX').value) || 0;
+        item.y = Number(document.getElementById('selY').value) || 0;
+        item.width = Math.max(10, Number(document.getElementById('selW').value) || item.width);
+        item.height = Math.max(10, Number(document.getElementById('selH').value) || item.height);
+        render();
+      };
+
+      document.getElementById('keepRatio').onclick = () => {
+        const baseW = Number(document.getElementById('selW').value) || item.width;
+        const ratio = item.naturalWidth / item.naturalHeight;
+        document.getElementById('selH').value = Math.round(baseW / ratio);
+      };
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function selectItem(id) {
+      selectedId = id;
+      render();
+    }
+
+    function bringFront() {
+      const item = getSelectedItem();
+      if (!item) return;
+      item.z = ++zSeed;
+      render();
+    }
+
+    function sendBack() {
+      const item = getSelectedItem();
+      if (!item) return;
+      const minZ = Math.min(...items.map(v => v.z), 0);
+      item.z = minZ - 1;
+      render();
+    }
+
+    function deleteSelected() {
+      if (!selectedId) return;
+      items = items.filter(item => item.id !== selectedId);
+      selectedId = null;
+      render();
+    }
+
+    function alignLeft() {
+      const item = getSelectedItem();
+      if (!item) return;
+      item.x = 0;
+      render();
+    }
+
+    function alignTop() {
+      const item = getSelectedItem();
+      if (!item) return;
+      item.y = 0;
+      render();
+    }
+
+    function addFiles(fileList) {
+      const files = [...fileList].filter(file => file.type.startsWith('image/'));
+      if (!files.length) return;
+
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDefault = 320;
+            let w = img.width;
+            let h = img.height;
+            const ratio = Math.min(1, maxDefault / Math.max(w, h));
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+
+            items.push({
+              id: idSeed++,
+              name: file.name,
+              src: e.target.result,
+              x: 20 + (items.length % 5) * 40,
+              y: 20 + (items.length % 5) * 40,
+              width: w,
+              height: h,
+              naturalWidth: img.width,
+              naturalHeight: img.height,
+              z: ++zSeed
+            });
+            render();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderThumbs() {
+      countBadge.textContent = items.length;
+      if (!items.length) {
+        thumbList.innerHTML = '<div class="empty">上传图片后会显示在这里</div>';
+        return;
+      }
+
+      const sorted = [...items].sort((a, b) => b.z - a.z);
+      thumbList.innerHTML = sorted.map(item => `
+        <div class="thumb-item ${item.id === selectedId ? 'active' : ''}" data-id="${item.id}">
+          <img src="${item.src}" alt="${escapeHtml(item.name)}" />
+          <div class="thumb-meta">
+            <div class="name">${escapeHtml(item.name)}</div>
+            <div>位置：${Math.round(item.x)}, ${Math.round(item.y)}</div>
+            <div>尺寸：${Math.round(item.width)} × ${Math.round(item.height)}</div>
+            <div>层级：${item.z}</div>
+          </div>
+        </div>
+      `).join('');
+
+      thumbList.querySelectorAll('.thumb-item').forEach(node => {
+        node.onclick = () => selectItem(Number(node.dataset.id));
+      });
+    }
+
+    function renderCanvasItems() {
+      const sorted = [...items].sort((a, b) => a.z - b.z);
+      canvas.innerHTML = '';
+
+      sorted.forEach(item => {
+        const el = document.createElement('div');
+        el.className = `item ${item.id === selectedId ? 'active' : ''}`;
+        el.style.left = `${item.x}px`;
+        el.style.top = `${item.y}px`;
+        el.style.width = `${item.width}px`;
+        el.style.height = `${item.height}px`;
+        el.style.zIndex = item.z;
+        el.dataset.id = item.id;
+
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = item.name;
+        el.appendChild(img);
+
+        const handle = document.createElement('div');
+        handle.className = 'resize-handle';
+        el.appendChild(handle);
+
+        el.addEventListener('mousedown', e => {
+          selectItem(item.id);
+          if (e.target === handle) return startResize(e, item.id);
+          startDrag(e, item.id);
+        });
+
+        canvas.appendChild(el);
+      });
+    }
+
+    function render() {
+      renderCanvasItems();
+      renderThumbs();
+      refreshSelectionPanel();
+    }
+
+    function pointerToCanvas(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (clientX - rect.left) / zoom,
+        y: (clientY - rect.top) / zoom
+      };
+    }
+
+    function startDrag(e, id) {
+      e.preventDefault();
+      const item = items.find(v => v.id === id);
+      if (!item) return;
+      item.z = ++zSeed;
+      const start = pointerToCanvas(e.clientX, e.clientY);
+      const offsetX = start.x - item.x;
+      const offsetY = start.y - item.y;
+
+      function onMove(ev) {
+        const p = pointerToCanvas(ev.clientX, ev.clientY);
+        item.x = p.x - offsetX;
+        item.y = p.y - offsetY;
+        render();
+      }
+      function onUp() {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      }
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    }
+
+    function startResize(e, id) {
+      e.preventDefault();
+      e.stopPropagation();
+      const item = items.find(v => v.id === id);
+      if (!item) return;
+
+      const start = pointerToCanvas(e.clientX, e.clientY);
+      const startW = item.width;
+      const startH = item.height;
+
+      function onMove(ev) {
+        const p = pointerToCanvas(ev.clientX, ev.clientY);
+        item.width = Math.max(20, startW + (p.x - start.x));
+        item.height = Math.max(20, startH + (p.y - start.y));
+        render();
+      }
+      function onUp() {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      }
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    }
+
+    function getExportBounds() {
+      if (!items.length) {
+        return { minX: 0, minY: 0, width: Number(canvasWidthInput.value), height: Number(canvasHeightInput.value) };
+      }
+
+      if (!exportAutoFit) {
+        return { minX: 0, minY: 0, width: Number(canvasWidthInput.value), height: Number(canvasHeightInput.value) };
+      }
+
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      items.forEach(item => {
+        minX = Math.min(minX, item.x);
+        minY = Math.min(minY, item.y);
+        maxX = Math.max(maxX, item.x + item.width);
+        maxY = Math.max(maxY, item.y + item.height);
+      });
+      return {
+        minX: Math.floor(minX),
+        minY: Math.floor(minY),
+        width: Math.ceil(maxX - minX),
+        height: Math.ceil(maxY - minY)
+      };
+    }
+
+    async function exportImage() {
+      if (!items.length) {
+        alert('请先上传至少一张图片');
+        return;
+      }
+
+      const bounds = getExportBounds();
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = Math.max(1, bounds.width);
+      outCanvas.height = Math.max(1, bounds.height);
+      const ctx = outCanvas.getContext('2d');
+      ctx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+
+      const sorted = [...items].sort((a, b) => a.z - b.z);
+      for (const item of sorted) {
+        const img = await loadImage(item.src);
+        ctx.drawImage(
+          img,
+          Math.round(item.x - bounds.minX),
+          Math.round(item.y - bounds.minY),
+          Math.round(item.width),
+          Math.round(item.height)
+        );
+      }
+
+      outCanvas.toBlob(blob => {
+        if (!blob) return;
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = `stitched-${Date.now()}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    fileInput.addEventListener('change', e => addFiles(e.target.files));
+
+    dropzone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      addFiles(e.dataTransfer.files);
+    });
+
+    document.getElementById('applyCanvasSize').onclick = updateCanvasSize;
+    document.getElementById('zoomIn').onclick = () => setZoom(zoom + 0.1);
+    document.getElementById('zoomOut').onclick = () => setZoom(zoom - 0.1);
+    document.getElementById('resetZoom').onclick = () => setZoom(1);
+    document.getElementById('bringFront').onclick = bringFront;
+    document.getElementById('sendBack').onclick = sendBack;
+    document.getElementById('deleteSelected').onclick = deleteSelected;
+    document.getElementById('exportBtn').onclick = exportImage;
+    document.getElementById('alignLeft').onclick = alignLeft;
+    document.getElementById('alignTop').onclick = alignTop;
+    document.getElementById('autoFitBtn').onclick = () => {
+      exportAutoFit = !exportAutoFit;
+      document.getElementById('autoFitBtn').textContent = exportAutoFit ? '按内容包围导出：开' : '按内容包围导出';
+    };
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const activeTag = document.activeElement?.tagName?.toLowerCase();
+        if (activeTag !== 'input' && activeTag !== 'textarea') {
+          deleteSelected();
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        exportImage();
+      }
+    });
+
+    canvas.addEventListener('mousedown', e => {
+      if (e.target === canvas) {
+        selectedId = null;
+        render();
+      }
+    });
+
+    updateCanvasSize();
+    setZoom(1);
+    render();
+  </script>
+</body>
+</html>
